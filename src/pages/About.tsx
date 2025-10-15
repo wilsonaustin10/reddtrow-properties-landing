@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
+import sandraHeadshot from "@/assets/sandra-nesbitt.jpg";
 
 const About = () => {
   const scrollToLeadForm = () => {
@@ -16,24 +17,37 @@ const About = () => {
 
         <section className="mb-12">
           <div className="mb-8">
-            <div className="w-full max-w-2xl mx-auto h-64 bg-primary/10 rounded-lg shadow-lg flex items-center justify-center">
-              <span className="text-4xl font-bold text-primary">Team Photo</span>
+            <div className="w-full max-w-md mx-auto">
+              <img 
+                src={sandraHeadshot} 
+                alt="Sandra Nesbitt - Founder of Reddtrow Properties" 
+                className="w-full rounded-lg shadow-lg"
+              />
             </div>
           </div>
 
-          <h2 className="text-3xl font-semibold text-primary mb-6">Our Team</h2>
+          <h2 className="text-3xl font-semibold text-primary mb-6">About Sandra Nesbitt</h2>
           <div className="space-y-4 text-muted-foreground leading-relaxed text-lg">
             <p>
-              We have been working with homeowners like yourself to sell your property with the right amount of speed and convenience so you have the least amount of issues. We give people fair cash offers and we purchase properties as is.
+              Sandra Nesbitt is the founder and owner of Reddtrow Properties, LLC. Born and raised in New York City, Sandra realized early on her passion for art and entrepreneurship. After graduating with a BFA in the late 1990s, Sandra was intent on someday being a Creative Director for an ad agency. However, while looking for full-time work in her profession, Sandra discovered real estate investing.
             </p>
             <p>
-              We are a comprehensive business and will walk you through and manage the whole process at your pace so that selling your home is stress-free. We make the process as smooth as possible so you don't have to worry about it, let us worry for you!
+              Real estate investing has taught Sandra many valuable lessons about life that have become part of her business philosophy. One – perseverance, patience and prayer are important keys to success. Two – don't judge a book by its cover. You can always find something in common with anyone, no matter his or her walk through life. Three – "You can have everything in life you want, if you will just help enough other people get what they want" – Zig Ziglar.
             </p>
             <p>
-              As experts, we will help you explore all the options available to you so you can make the decision that is best for you. We have your best interest in mind. Honesty, integrity and service are our core pillars.
+              As the founder of Reddtrow Properties, LLC, Sandra's passion is to add value in regards to real estate. Her company strives to be different from other real estate investment companies. Reddtrow's services, resources and options are what sets them apart.
             </p>
             <p>
-              We're a local family business with a reputation you can trust. We work with a reputable title company who can attest that we do follow through! We look forward to working with you.
+              We've been in business since 1999. Reddtrow began in the northeast part of the United States, and has been in the Dallas / Fort Worth area since 2007. We've closed on houses that had no hope. This is our mission: to provide homeowners with a fast, stress-free way to sell their house. We conduct all our transactions with honesty and integrity. Read our client testimonials to find out more about what the Reddtrow experience is like.
+            </p>
+            <p>
+              Our real estate investment firm purchases single family properties in DFW and also Houston and Bryan / College Station Texas. We buy homes that are in poor condition for a number of reasons including homes that need repairs, homeowners who are behind on payments or facing foreclosure, fire or water damage, divorce, job transfer, problem with tenants, etc.
+            </p>
+            <p>
+              When you sell your home to Reddtrow, we will pay all basic closing costs, purchase your house in as-is condition, and typically close 6-9 days after the title is cleared.
+            </p>
+            <p>
+              Choose the real estate investment firm you can trust. Contact Reddtrow today.
             </p>
           </div>
         </section>
