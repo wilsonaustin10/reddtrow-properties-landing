@@ -27,17 +27,17 @@
     --muted: 210 16% 95%;
     --muted-foreground: 210 6% 46%;
 
-    --accent: 210 16% 95%;
-    --accent-foreground: 210 11% 15%;
+    --accent: 270 1% 31%;
+    --accent-foreground: 0 0% 100%;
 
     /* Success green for benefits */
     --success: 142 76% 36%;
     --success-foreground: 0 0% 100%;
 
-    /* Urgency orange for CTAs */
-    --urgency: 25 95% 53%;
+    /* Urgency color matching secondary */
+    --urgency: 270 1% 31%;
     --urgency-foreground: 0 0% 100%;
-    --urgency-hover: 25 95% 48%;
+    --urgency-hover: 270 1% 26%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
@@ -52,7 +52,7 @@
     --hero-gradient: linear-gradient(135deg, hsl(1 64% 28%), hsl(1 64% 38%));
     --trust-shadow: 0 10px 30px -10px hsl(1 64% 28% / 0.3);
     --card-shadow: 0 4px 12px -2px hsl(210 20% 20% / 0.1);
-    --urgency-glow: 0 0 20px hsl(25 95% 53% / 0.4);
+    --urgency-glow: 0 0 20px hsl(270 1% 31% / 0.4);
     
     /* Typography */
     --font-heading: 'Inter', system-ui, -apple-system, sans-serif;
