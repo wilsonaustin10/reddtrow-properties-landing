@@ -1,14 +1,13 @@
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import emblemLogo from "@/assets/reddtrow-emblem.png";
 const Footer = () => {
   return <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-3 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <div className="h-24 w-40 bg-white/10 rounded flex items-center justify-center">
-              <span className="text-3xl font-bold text-white">Logo</span>
-            </div>
+            <img src={emblemLogo} alt="Reddtrow Properties" className="h-24 w-auto" />
             <p className="text-primary-foreground/80 leading-relaxed">
               We're a local family-owned business that has been helping homeowners sell their properties quickly and fairly for over 10 years.
             </p>
