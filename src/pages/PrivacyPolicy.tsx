@@ -14,7 +14,7 @@ const PrivacyPolicy = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">1. Introduction</h2>
             <p className="text-muted-foreground leading-relaxed mb-4">
-              FastCash Homes ("we," "our," or "us") is committed to protecting the privacy and security of your personal information. This Privacy Policy describes how we collect, use, disclose, and safeguard your information when you visit our website and use our services, including when you submit information through forms on our site.
+              Cash Home Buyers ("we," "our," or "us") is committed to protecting the privacy and security of your personal information. This Privacy Policy describes how we collect, use, disclose, and safeguard your information when you visit our website and use our services, including when you submit information through forms on our site.
             </p>
             <p className="text-muted-foreground leading-relaxed">
               Please read this Privacy Policy carefully. By accessing or using our website, you acknowledge that you have read, understood, and agree to be bound by all the terms of this Privacy Policy.
@@ -133,9 +133,9 @@ const PrivacyPolicy = () => {
               If you have any questions or concerns about this Privacy Policy or our privacy practices, please contact us at:
             </p>
             <div className="bg-gray-50 p-6 rounded-lg">
-              <p className="font-semibold text-primary mb-2">FastCash Homes</p>
-              <p className="text-muted-foreground mb-1">Email: info@fastcashhomes.com</p>
-              <p className="text-muted-foreground">Phone: (555) 123-CASH</p>
+              <p className="font-semibold text-primary mb-2">Cash Home Buyers</p>
+              <p className="text-muted-foreground mb-1">Email: info@cashhomebuyers.com</p>
+              <p className="text-muted-foreground">Phone: (555) 123-4567</p>
             </div>
           </section>
         </div>

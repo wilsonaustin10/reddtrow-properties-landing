@@ -1,16 +1,16 @@
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import logo from "@/assets/logo.png";
 const Footer = () => {
   return <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-3 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <img src={logo} alt="Amarillo Cash Home Buyers" className="h-24 w-auto" />
+            <div className="h-24 w-40 bg-white/10 rounded flex items-center justify-center">
+              <span className="text-3xl font-bold text-white">Logo</span>
+            </div>
             <p className="text-primary-foreground/80 leading-relaxed">
-              We're Amarillo's #1 local home buyers - a family-owned business that has been helping 
-              Amarillo homeowners sell their properties quickly and fairly for over 10 years.
+              We're a local family-owned business that has been helping homeowners sell their properties quickly and fairly for over 10 years.
             </p>
             <div className="flex items-center space-x-2">
               
@@ -25,7 +25,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-urgency" />
                 <div>
-                  <div className="font-semibold">(806) 803-9859</div>
+                  <div className="font-semibold">(555) 123-4567</div>
                   <div className="text-sm text-primary-foreground/80">Call or Text Anytime</div>
                 </div>
               </div>
@@ -33,7 +33,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-urgency" />
                 <div>
-                  <div className="font-semibold">info@amarillocashhomebuyers.com</div>
+                  <div className="font-semibold">info@cashhomebuyers.com</div>
                   <div className="text-sm text-primary-foreground/80">Email Us 24/7</div>
                 </div>
               </div>
@@ -41,7 +41,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <MapPin className="w-5 h-5 text-urgency" />
                 <div>
-                  <div className="font-semibold">Serving Amarillo & Surrounding Areas</div>
+                  <div className="font-semibold">Serving Your Local Area</div>
                   <div className="text-sm text-primary-foreground/80">Your Local Home Buyers</div>
                 </div>
               </div>
@@ -71,8 +71,8 @@ const Footer = () => {
                 Get My Cash Offer
               </Button>
               
-              <Button variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" onClick={() => window.open('tel:+18068039859')}>
-                Call (806) 803-9859
+              <Button variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" onClick={() => window.open('tel:+15551234567')}>
+                Call (555) 123-4567
               </Button>
             </div>
             
@@ -85,7 +85,7 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/20 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-primary-foreground/80">
-              © 2024 Amarillo Cash Home Buyers. All rights reserved.
+              © 2024 Cash Home Buyers. All rights reserved.
             </div>
             
             <div className="flex space-x-6 text-sm">
@@ -98,7 +98,7 @@ const Footer = () => {
               <a href="/terms-conditions" className="text-primary-foreground/80 hover:text-white transition-colors">
                 Terms & Conditions
               </a>
-              <a href="mailto:info@amarillocashhomebuyers.com" className="text-primary-foreground/80 hover:text-white transition-colors">
+              <a href="mailto:info@cashhomebuyers.com" className="text-primary-foreground/80 hover:text-white transition-colors">
                 Contact Us
               </a>
             </div>

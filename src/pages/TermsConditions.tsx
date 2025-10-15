@@ -14,7 +14,7 @@ const TermsConditions = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">1. Acceptance of Terms</h2>
             <p className="text-muted-foreground leading-relaxed">
-              Welcome to FastCash Homes. These Terms of Service ("Terms") govern your access to and use of our website, services, and content. By accessing or using our website, you agree to be bound by these Terms and our Privacy Policy.
+              Welcome to Cash Home Buyers. These Terms of Service ("Terms") govern your access to and use of our website, services, and content. By accessing or using our website, you agree to be bound by these Terms and our Privacy Policy.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-4">
               If you do not agree to these Terms, you should not access or use our website or services.
@@ -24,7 +24,7 @@ const TermsConditions = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">2. Description of Services</h2>
             <p className="text-muted-foreground leading-relaxed">
-              FastCash Homes provides a platform for homeowners to request cash offers for their properties. Our services include but are not limited to:
+              Cash Home Buyers provides a platform for homeowners to request cash offers for their properties. Our services include but are not limited to:
             </p>
             <ul className="list-disc list-inside text-muted-foreground leading-relaxed mt-4 space-y-2">
               <li>Providing online forms for property owners to submit information about their properties</li>
@@ -63,7 +63,7 @@ const TermsConditions = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">5. Intellectual Property Rights</h2>
             <p className="text-muted-foreground leading-relaxed">
-              All content, features, and functionality on our website, including but not limited to text, graphics, logos, icons, images, audio clips, digital downloads, data compilations, and software, are owned by FastCash Homes, our licensors, or other providers of such material and are protected by United States and international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.
+              All content, features, and functionality on our website, including but not limited to text, graphics, logos, icons, images, audio clips, digital downloads, data compilations, and software, are owned by Cash Home Buyers, our licensors, or other providers of such material and are protected by United States and international copyright, trademark, patent, trade secret, and other intellectual property or proprietary rights laws.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-4">
               You may not reproduce, distribute, modify, create derivative works of, publicly display, publicly perform, republish, download, store, or transmit any of the material on our website without our prior written consent.
@@ -101,7 +101,7 @@ const TermsConditions = () => {
               YOUR USE OF OUR WEBSITE AND SERVICES IS AT YOUR SOLE RISK. THE WEBSITE AND SERVICES ARE PROVIDED ON AN "AS IS" AND "AS AVAILABLE" BASIS, WITHOUT WARRANTIES OF ANY KIND, EITHER EXPRESS OR IMPLIED.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-4">
-              FASTCASH HOMES EXPRESSLY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
+              CASH HOME BUYERS EXPRESSLY DISCLAIMS ALL WARRANTIES OF ANY KIND, WHETHER EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-4">
               WE DO NOT WARRANT THAT THE WEBSITE WILL BE UNINTERRUPTED, TIMELY, SECURE, OR ERROR-FREE, OR THAT ANY DEFECTS IN THE WEBSITE WILL BE CORRECTED. THE CONTENT AND INFORMATION AVAILABLE ON THE WEBSITE MAY INCLUDE TECHNICAL INACCURACIES OR TYPOGRAPHICAL ERRORS.
@@ -111,14 +111,14 @@ const TermsConditions = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">9. Limitation of Liability</h2>
             <p className="text-muted-foreground leading-relaxed">
-              IN NO EVENT SHALL FASTCASH HOMES, ITS AFFILIATES, OR THEIR LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS, OR DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE OR INABILITY TO USE THE WEBSITE, ANY WEBSITES LINKED TO IT, ANY CONTENT ON THE WEBSITE OR SUCH OTHER WEBSITES, INCLUDING ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES.
+              IN NO EVENT SHALL CASH HOME BUYERS, ITS AFFILIATES, OR THEIR LICENSORS, SERVICE PROVIDERS, EMPLOYEES, AGENTS, OFFICERS, OR DIRECTORS BE LIABLE FOR DAMAGES OF ANY KIND, UNDER ANY LEGAL THEORY, ARISING OUT OF OR IN CONNECTION WITH YOUR USE OR INABILITY TO USE THE WEBSITE, ANY WEBSITES LINKED TO IT, ANY CONTENT ON THE WEBSITE OR SUCH OTHER WEBSITES, INCLUDING ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES.
             </p>
           </section>
 
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">10. Indemnification</h2>
             <p className="text-muted-foreground leading-relaxed">
-              You agree to defend, indemnify, and hold harmless FastCash Homes, its affiliates, licensors, and service providers, and its and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the website.
+              You agree to defend, indemnify, and hold harmless Cash Home Buyers, its affiliates, licensors, and service providers, and its and their respective officers, directors, employees, contractors, agents, licensors, suppliers, successors, and assigns from and against any claims, liabilities, damages, judgments, awards, losses, costs, expenses, or fees (including reasonable attorneys' fees) arising out of or relating to your violation of these Terms or your use of the website.
             </p>
           </section>
 
@@ -139,7 +139,7 @@ const TermsConditions = () => {
           <section className="mb-8">
             <h2 className="text-2xl font-semibold text-primary mb-4">13. Waiver and Severability</h2>
             <p className="text-muted-foreground leading-relaxed">
-              No waiver by FastCash Homes of any term or condition set out in these Terms shall be deemed a further or continuing waiver of such term or condition or a waiver of any other term or condition, and any failure to assert a right or provision under these Terms shall not constitute a waiver of such right or provision.
+              No waiver by Cash Home Buyers of any term or condition set out in these Terms shall be deemed a further or continuing waiver of such term or condition or a waiver of any other term or condition, and any failure to assert a right or provision under these Terms shall not constitute a waiver of such right or provision.
             </p>
             <p className="text-muted-foreground leading-relaxed mt-4">
               If any provision of these Terms is held by a court or other tribunal of competent jurisdiction to be invalid, illegal, or unenforceable for any reason, such provision shall be eliminated or limited to the minimum extent such that the remaining provisions of the Terms will continue in full force and effect.
@@ -159,9 +159,9 @@ const TermsConditions = () => {
               If you have any questions or concerns about these Terms, please contact us at:
             </p>
             <div className="bg-gray-50 p-6 rounded-lg">
-              <p className="font-semibold text-primary mb-2">FastCash Homes</p>
-              <p className="text-muted-foreground mb-1">Email: info@fastcashhomes.com</p>
-              <p className="text-muted-foreground">Phone: (555) 123-CASH</p>
+              <p className="font-semibold text-primary mb-2">Cash Home Buyers</p>
+              <p className="text-muted-foreground mb-1">Email: info@cashhomebuyers.com</p>
+              <p className="text-muted-foreground">Phone: (555) 123-4567</p>
             </div>
           </section>
         </div>

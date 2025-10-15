@@ -44,8 +44,8 @@ const Benefits = () => {
     },
     {
       icon: <Users className="w-8 h-8 text-urgency" />,
-      title: "Local Amarillo Family Business",
-      description: "We're not some big corporation. We're your Amarillo neighbors, and we treat you like family."
+      title: "Local Family Business",
+      description: "We're not some big corporation. We're your local neighbors, and we treat you like family."
     },
     {
       icon: <FileText className="w-8 h-8 text-urgency" />,
@@ -59,10 +59,10 @@ const Benefits = () => {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-4xl font-bold text-primary mb-4">
-            Why Choose Amarillo's #1 Local Home Buyers?
+            Why Choose Us as Your Local Home Buyers?
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            We've helped hundreds of Amarillo homeowners sell their properties quickly and easily. 
+            We've helped hundreds of homeowners sell their properties quickly and easily. 
             Here's what makes us different from traditional real estate.
           </p>
         </div>

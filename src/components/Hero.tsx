@@ -7,7 +7,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
-import heroImage from "@/assets/hero-house.jpg";
 import { CheckCircle2, Clock, DollarSign, MapPin, Phone, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -188,7 +187,7 @@ const Hero = () => {
                   <a href="/privacy-policy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                     Privacy Policy
                   </a>
-                  . By submitting this form, you consent to receive SMS messages and/or emails and/or calls from Amarillo Cash Home Buyers. Message frequency varies. To unsubscribe, follow the instructions provided in our communications. Msg & data rates may apply for SMS. Your information is secure and will not be sold to third parties. Text HELP for HELP, text STOP to cancel.
+                  . By submitting this form, you consent to receive SMS messages and/or emails and/or calls from us. Message frequency varies. To unsubscribe, follow the instructions provided in our communications. Msg & data rates may apply for SMS. Your information is secure and will not be sold to third parties. Text HELP for HELP, text STOP to cancel.
                 </Label>
               </div>
             )}
@@ -293,12 +292,12 @@ const Hero = () => {
             <div className="space-y-2">
               <div className="flex items-center space-x-2 mb-2 lg:mb-4">
                 <div className="success-badge px-3 lg:px-6 py-1 lg:py-3 rounded-full text-sm lg:text-xl font-bold shadow-lg">
-                  #1 Local Home Buyers in Amarillo
+                  #1 Local Home Buyers
                 </div>
               </div>
               
               <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold leading-tight">
-                Sell Your Amarillo House 
+                Sell Your House 
                 <span className="block text-urgency">Fast for Cash</span>
               </h1>
               

@@ -1,7 +1,6 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
-import teamPhoto from "@/assets/team-photo.jpg";
 
 const About = () => {
   const scrollToLeadForm = () => {
@@ -13,15 +12,13 @@ const About = () => {
       <Header />
       
       <div className="container mx-auto px-4 py-16 max-w-5xl">
-        <h1 className="text-4xl font-bold text-primary mb-8 text-center">About Amarillo Cash Home Buyers</h1>
+        <h1 className="text-4xl font-bold text-primary mb-8 text-center">About Us</h1>
 
         <section className="mb-12">
           <div className="mb-8">
-            <img 
-              src={teamPhoto} 
-              alt="Amarillo Cash Home Buyers Team" 
-              className="w-full max-w-2xl mx-auto rounded-lg shadow-lg"
-            />
+            <div className="w-full max-w-2xl mx-auto h-64 bg-primary/10 rounded-lg shadow-lg flex items-center justify-center">
+              <span className="text-4xl font-bold text-primary">Team Photo</span>
+            </div>
           </div>
 
           <h2 className="text-3xl font-semibold text-primary mb-6">Our Team</h2>

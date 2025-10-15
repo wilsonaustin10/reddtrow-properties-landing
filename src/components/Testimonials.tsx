@@ -112,10 +112,10 @@ const Testimonials = () => {
         <div className="text-center mt-12">
           <div className="bg-primary/5 p-8 rounded-2xl max-w-2xl mx-auto">
             <h3 className="text-2xl font-bold text-primary mb-4">
-              Join Our Happy Amarillo Homeowners
+              Join Our Happy Homeowners
             </h3>
             <p className="text-muted-foreground mb-6">
-              We've helped countless Amarillo families in all situations sell their homes quickly and move on with their lives.
+              We've helped countless families in all situations sell their homes quickly and move on with their lives.
             </p>
             <div className="grid grid-cols-3 gap-4 text-center">
               <div>
