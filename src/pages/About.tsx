@@ -16,18 +16,18 @@ const About = () => {
         <h1 className="text-4xl font-bold text-primary mb-8 text-center">About Us</h1>
 
         <section className="mb-12">
-          <div className="mb-8">
-            <div className="w-full max-w-md mx-auto">
+          <h2 className="text-3xl font-semibold text-primary mb-6">About Sandra Nesbitt</h2>
+          
+          <div className="flex flex-col md:flex-row gap-6">
+            <div className="w-full md:w-1/4 flex-shrink-0">
               <img 
                 src={sandraHeadshot} 
                 alt="Sandra Nesbitt - Founder of Reddtrow Properties" 
                 className="w-full rounded-lg shadow-lg"
               />
             </div>
-          </div>
-
-          <h2 className="text-3xl font-semibold text-primary mb-6">About Sandra Nesbitt</h2>
-          <div className="space-y-4 text-muted-foreground leading-relaxed text-lg">
+            
+            <div className="space-y-4 text-muted-foreground leading-relaxed text-lg flex-1">
             <p>
               Sandra Nesbitt is the founder and owner of Reddtrow Properties, LLC. Born and raised in New York City, Sandra realized early on her passion for art and entrepreneurship. After graduating with a BFA in the late 1990s, Sandra was intent on someday being a Creative Director for an ad agency. However, while looking for full-time work in her profession, Sandra discovered real estate investing.
             </p>
@@ -49,6 +49,7 @@ const About = () => {
             <p>
               Choose the real estate investment firm you can trust. Contact Reddtrow today.
             </p>
+            </div>
           </div>
         </section>
 
