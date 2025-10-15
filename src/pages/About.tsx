@@ -16,23 +16,26 @@ const About = () => {
         <h1 className="text-4xl font-bold text-primary mb-8 text-center">About Us</h1>
 
         <section className="mb-12">
-          <h2 className="text-3xl font-semibold text-primary mb-6">About Sandra Nesbitt</h2>
-          
-          <div className="flex flex-col md:flex-row gap-6">
-            <div className="w-full md:w-1/4 flex-shrink-0">
-              <img 
-                src={sandraHeadshot} 
-                alt="Sandra Nesbitt - Founder of Reddtrow Properties" 
-                className="w-full rounded-lg shadow-lg"
-              />
+          <div className="flex flex-col md:flex-row gap-8">
+            <div className="w-full md:w-1/3 flex-shrink-0">
+              <div className="bg-muted/30 p-6 rounded-lg">
+                <img 
+                  src={sandraHeadshot} 
+                  alt="Sandra Nesbitt - Founder of Reddtrow Properties" 
+                  className="w-full rounded-lg mb-4"
+                />
+                <p className="text-sm text-foreground text-center">
+                  Sandra Nesbitt, Owner of Reddtrow Properties, LLC
+                </p>
+              </div>
             </div>
             
-            <div className="space-y-4 text-muted-foreground leading-relaxed text-lg flex-1">
+            <div className="space-y-4 text-foreground leading-relaxed flex-1">
             <p>
               Sandra Nesbitt is the founder and owner of Reddtrow Properties, LLC. Born and raised in New York City, Sandra realized early on her passion for art and entrepreneurship. After graduating with a BFA in the late 1990s, Sandra was intent on someday being a Creative Director for an ad agency. However, while looking for full-time work in her profession, Sandra discovered real estate investing.
             </p>
             <p>
-              Real estate investing has taught Sandra many valuable lessons about life that have become part of her business philosophy. One – perseverance, patience and prayer are important keys to success. Two – don't judge a book by its cover. You can always find something in common with anyone, no matter his or her walk through life. Three – "You can have everything in life you want, if you will just help enough other people get what they want" – Zig Ziglar.
+              Real estate investing has taught Sandra many valuable lessons about life that have become part of her business philosophy. One – perseverance, patience and prayer are important keys to success. Two – don't judge a book by its cover. You can always find something in common with anyone, no matter his or her walk through life. Three – <em>"You can have everything in life you want, if you will just help enough other people get what they want"</em> – Zig Ziglar.
             </p>
             <p>
               As the founder of Reddtrow Properties, LLC, Sandra's passion is to add value in regards to real estate. Her company strives to be different from other real estate investment companies. Reddtrow's services, resources and options are what sets them apart.
