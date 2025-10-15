@@ -298,7 +298,7 @@ const Hero = () => {
               
               <h1 className="text-2xl md:text-4xl lg:text-6xl font-bold leading-tight">
                 Sell Your House 
-                <span className="block text-urgency">Fast for Cash</span>
+                <span className="block" style={{ color: '#2570db' }}>Fast for Cash</span>
               </h1>
               
               <p className="text-base md:text-xl lg:text-2xl text-white/90 leading-relaxed">
