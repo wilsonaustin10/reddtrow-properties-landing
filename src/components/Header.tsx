@@ -1,14 +1,13 @@
 import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo from "@/assets/reddtrow-logo.png";
 const Header = () => {
   return <header className="bg-white/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <a href="/" className="hover:opacity-80 transition-opacity">
-              <div className="h-20 w-32 bg-primary/10 rounded flex items-center justify-center">
-                <span className="text-2xl font-bold text-primary">Logo</span>
-              </div>
+              <img src={logo} alt="Reddtrow Properties Logo" className="h-16 w-auto" />
             </a>
           </div>
           
