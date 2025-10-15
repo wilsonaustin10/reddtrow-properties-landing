@@ -15,10 +15,10 @@
     --popover: 0 0% 100%;
     --popover-foreground: 210 11% 15%;
 
-    /* Dark purple primary */
-    --primary: 245 21% 24%;
+    /* Deep red primary */
+    --primary: 1 64% 28%;
     --primary-foreground: 0 0% 100%;
-    --primary-hover: 245 21% 19%;
+    --primary-hover: 1 64% 23%;
 
     /* Orange secondary */
     --secondary: 22 92% 63%;
@@ -49,8 +49,8 @@
     --radius: 0.75rem;
 
     /* Custom design tokens for real estate */
-    --hero-gradient: linear-gradient(135deg, hsl(245 21% 24%), hsl(245 21% 34%));
-    --trust-shadow: 0 10px 30px -10px hsl(245 21% 24% / 0.3);
+    --hero-gradient: linear-gradient(135deg, hsl(1 64% 28%), hsl(1 64% 38%));
+    --trust-shadow: 0 10px 30px -10px hsl(1 64% 28% / 0.3);
     --card-shadow: 0 4px 12px -2px hsl(210 20% 20% / 0.1);
     --urgency-glow: 0 0 20px hsl(25 95% 53% / 0.4);
     
