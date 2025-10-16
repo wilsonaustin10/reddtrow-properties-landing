@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 interface AddressAutocompleteProps {
   value: string;
   onChange: (address: string) => void;
+  onAddressSelect?: (isSelected: boolean) => void;
   placeholder?: string;
   required?: boolean;
   className?: string;
@@ -15,6 +16,7 @@ interface AddressAutocompleteProps {
 const AddressAutocomplete = ({ 
   value, 
   onChange, 
+  onAddressSelect,
   placeholder = "123 Main St, City, State, ZIP",
   required = false,
   className = "h-12"
@@ -50,6 +52,7 @@ const AddressAutocomplete = ({
         (place: google.maps.places.PlaceResult) => {
           if (place.formatted_address) {
             onChange(place.formatted_address);
+            onAddressSelect?.(true);
           }
         }
       );
@@ -69,6 +72,8 @@ const AddressAutocomplete = ({
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onChange(e.target.value);
+    // Mark address as not selected when user manually types
+    onAddressSelect?.(false);
   };
 
   const handleInputFocus = () => {
