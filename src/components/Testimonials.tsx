@@ -99,7 +99,7 @@ const Testimonials = () => {
             <p className="text-muted-foreground mb-6">
               We've helped countless families in all situations sell their homes quickly and move on with their lives.
             </p>
-            <div className="grid grid-cols-3 gap-4 text-center">
+            <div className="grid grid-cols-3 gap-4 text-center mb-6">
               <div>
                 <div className="text-3xl font-bold text-primary">Everyday</div>
                 <div className="text-sm text-muted-foreground">We Buy Houses</div>
@@ -113,6 +113,12 @@ const Testimonials = () => {
                 <div className="text-sm text-muted-foreground">Years Experience</div>
               </div>
             </div>
+            <a 
+              href="/testimonials" 
+              className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors"
+            >
+              Read All Testimonials
+            </a>
           </div>
         </div>
       </div>
