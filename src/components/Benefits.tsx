@@ -14,8 +14,8 @@ const Benefits = () => {
   const benefits = [
     {
       icon: <DollarSign className="w-8 h-8 text-urgency" />,
-      title: "Cash Offer in 24 Hours",
-      description: "Get a fair, no-obligation cash offer for your property within one business day. No waiting, no uncertainty."
+      title: "Cash Offer in 7 Minutes or Less",
+      description: "Get a fair, no-obligation cash offer for your property in 7 minutes or less. No waiting, no uncertainty."
     },
     {
       icon: <Clock className="w-8 h-8 text-urgency" />,

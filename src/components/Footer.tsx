@@ -58,7 +58,7 @@ const Footer = () => {
             <h4 className="text-lg font-semibold">Get Started Today</h4>
             <p className="text-primary-foreground/80">
               Ready to sell your house fast for cash? Get your free, no-obligation 
-              offer in 24 hours.
+              offer in 7 minutes or less.
             </p>
             
             <div className="space-y-3">

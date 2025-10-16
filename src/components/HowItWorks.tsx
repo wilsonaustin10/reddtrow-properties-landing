@@ -5,7 +5,7 @@ const HowItWorks = () => {
     {
       number: "1",
       title: "Submit Your Info",
-      description: "In the coming 24 hours, a member of our team will reach out to arrange a consultation, entirely free of any obligation."
+      description: "Within 7 minutes or less, a member of our team will reach out to arrange a consultation, entirely free of any obligation."
     },
     {
       number: "2", 

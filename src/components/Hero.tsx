@@ -302,7 +302,7 @@ const Hero = () => {
               </h1>
               
               <p className="text-base md:text-xl lg:text-2xl text-white/90 leading-relaxed">
-                Get a fair cash offer in 24 hours. No repairs, no fees, no hassles. 
+                Get a fair cash offer in 7 minutes or less. No repairs, no fees, no hassles. 
                 Close in as little as 7 days on your timeline.
               </p>
             </div>
