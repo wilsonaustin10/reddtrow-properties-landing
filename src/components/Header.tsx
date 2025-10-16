@@ -1,19 +1,20 @@
 import { Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 import logo from "@/assets/reddtrow-logo.png";
 const Header = () => {
   return <header className="bg-white/95 backdrop-blur-sm border-b border-border sticky top-0 z-50">
       <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <a href="/" className="hover:opacity-80 transition-opacity">
+            <Link to="/" className="hover:opacity-80 transition-opacity">
               <img src={logo} alt="Reddtrow Properties Logo" className="h-16 w-auto" />
-            </a>
+            </Link>
           </div>
           
           <nav className="hidden lg:flex items-center space-x-6">
-            <a href="/about" className="text-foreground hover:text-primary transition-colors font-medium">About</a>
-            <a href="/testimonials" className="text-foreground hover:text-primary transition-colors font-medium">Testimonials</a>
+            <Link to="/about" className="text-foreground hover:text-primary transition-colors font-medium">About</Link>
+            <Link to="/testimonials" className="text-foreground hover:text-primary transition-colors font-medium">Testimonials</Link>
           </nav>
           
           <div className="flex items-center space-x-4">
