@@ -11,6 +11,11 @@ const Header = () => {
             </a>
           </div>
           
+          <nav className="hidden lg:flex items-center space-x-6">
+            <a href="/about" className="text-foreground hover:text-primary transition-colors font-medium">About</a>
+            <a href="/testimonials" className="text-foreground hover:text-primary transition-colors font-medium">Testimonials</a>
+          </nav>
+          
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center space-x-4 text-base">
               <div className="flex items-center space-x-1">
