@@ -286,7 +286,13 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       phone: leadPayload.contact.phone,
       address1: leadPayload.property.address,
       tags: ['website-lead', 'cash-buyer', 'ppc'],
-      source: leadPayload.source || 'public api'
+      source: leadPayload.source || 'public api',
+      customField: {
+        condition: leadPayload.property.condition,
+        property_listed: leadPayload.property.is_listed ? 'yes' : 'no',
+        timeline: leadPayload.property.timeline,
+        asking_price: leadPayload.property.asking_price
+      }
     };
 
     console.log('📤 Payload for GHL:', JSON.stringify(ghlPayload, null, 2));
