@@ -22,7 +22,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-urgency" />
                 <div>
-                  <div className="font-semibold">(555) 123-4567</div>
+                  <div className="font-semibold">(469) 939-9957</div>
                   <div className="text-sm text-primary-foreground/80">Call or Text Anytime</div>
                 </div>
               </div>
@@ -30,7 +30,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-urgency" />
                 <div>
-                  <div className="font-semibold">info@cashhomebuyers.com</div>
+                  <div className="font-semibold">info@reddtrowproperties.com</div>
                   <div className="text-sm text-primary-foreground/80">Email Us 24/7</div>
                 </div>
               </div>
@@ -68,8 +68,8 @@ const Footer = () => {
                 Get My Cash Offer
               </Button>
               
-              <Button variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" onClick={() => window.open('tel:+15551234567')}>
-                Call (555) 123-4567
+              <Button variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" onClick={() => window.open('tel:+14699399957')}>
+                Call (469) 939-9957
               </Button>
             </div>
             
@@ -82,7 +82,7 @@ const Footer = () => {
         <div className="border-t border-primary-foreground/20 mt-8 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
             <div className="text-sm text-primary-foreground/80">
-              © 2024 Cash Home Buyers. All rights reserved.
+              © 2024 Reddtrow Properties, LLC. All rights reserved.
             </div>
             
             <div className="flex space-x-6 text-sm">
@@ -95,7 +95,7 @@ const Footer = () => {
               <a href="/terms-conditions" className="text-primary-foreground/80 hover:text-white transition-colors">
                 Terms & Conditions
               </a>
-              <a href="mailto:info@cashhomebuyers.com" className="text-primary-foreground/80 hover:text-white transition-colors">
+              <a href="mailto:info@reddtrowproperties.com" className="text-primary-foreground/80 hover:text-white transition-colors">
                 Contact Us
               </a>
             </div>
