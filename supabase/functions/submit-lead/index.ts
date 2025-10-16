@@ -304,7 +304,8 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       Accept: 'application/json',
       Version: '2021-07-28',
     };
-    if (isPit) {
+    // Location-Id header is required for both PIT and JWT tokens
+    if (bodyLocationId) {
       headers['Location-Id'] = bodyLocationId;
     }
 
