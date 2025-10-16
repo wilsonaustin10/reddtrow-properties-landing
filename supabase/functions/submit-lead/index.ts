@@ -285,7 +285,7 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       email: leadPayload.contact.email,
       phone: leadPayload.contact.phone,
       address1: leadPayload.property.address,
-      tags: ['website-lead', 'cash-buyer'],
+      tags: ['website-lead', 'cash-buyer', 'ppc'],
       source: leadPayload.source || 'public api'
     };
 
