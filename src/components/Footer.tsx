@@ -8,9 +8,7 @@ const Footer = () => {
           {/* Company Info */}
           <div className="space-y-4">
             <img src={emblemLogo} alt="Reddtrow Properties" className="h-24 w-auto" />
-            <p className="text-primary-foreground/80 leading-relaxed">
-              We're a local family-owned business that has been helping homeowners sell their properties quickly and fairly for over 10 years.
-            </p>
+            <p className="text-primary-foreground/80 leading-relaxed">We're a local family-owned business that has been helping homeowners sell their properties quickly and fairly for over 26 years.</p>
             <div className="flex items-center space-x-2">
               
               
