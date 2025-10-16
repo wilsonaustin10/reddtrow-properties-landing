@@ -1,7 +1,1 @@
-project_id = "kqzfjhtgutnzghymrqhy"
-
-[functions.submit-lead]
-verify_jwt = false
-
-[functions.ghl-diagnose]
-verify_jwt = false
+project_id = "qsyrvarehttlgqvvmgft"
