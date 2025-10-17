@@ -207,17 +207,18 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
   try {
     console.log('Starting GHL v2 API call for lead:', leadId);
 
-    // Build clean v2 payload
+    // Include required locationId per GHL docs
+    const effectiveLocationId = locationId || 'unxTj89xWq1FbRdTt2rH';
     const ghlPayload = {
       firstName: leadPayload.contact.first_name,
       lastName: leadPayload.contact.last_name,
       email: leadPayload.contact.email,
       phone: leadPayload.contact.phone,
       address1: leadPayload.property.address,
+      locationId: effectiveLocationId,
       tags: ['website-lead', 'cash-buyer', 'ppc'],
       source: leadPayload.source || 'website_form',
     };
-
     // Attempt 1: Raw PIT token (v2 standard)
     let headers: Record<string, string> = {
       'Authorization': apiKey,
@@ -251,20 +252,7 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       console.log('Response Status:', response.status);
     }
 
-    // Attempt 3: Add Location-Id header if still failing and locationId exists
-    if ((response.status === 401 || response.status === 403) && locationId) {
-      console.log('Attempt 3: Adding Location-Id header');
-      headers['Location-Id'] = locationId;
-      
-      response = await fetch(apiUrl, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(ghlPayload),
-      });
-
-      responseText = await response.text();
-      console.log('Response Status:', response.status);
-    }
+    // Attempt 3 removed: docs require locationId in body, not header
 
     // Process final result
     if (response.ok) {
