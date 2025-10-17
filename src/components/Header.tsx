@@ -21,7 +21,7 @@ const Header = () => {
             <div className="hidden md:flex items-center space-x-4 text-base">
               <div className="flex items-center space-x-1">
                 <Phone className="w-5 h-5 text-primary" />
-                <span className="font-bold text-lg">(469) 939-9957</span>
+                <span className="font-bold text-lg">214-306-9740</span>
               </div>
             </div>
             
@@ -37,7 +37,7 @@ const Header = () => {
         <div className="md:hidden flex flex-col items-center justify-center space-y-3 mt-3 pt-3 border-t border-border">
           <div className="flex items-center space-x-2">
             <Phone className="w-5 h-5 text-primary" />
-            <span className="font-bold text-xl">(469) 939-9957</span>
+            <span className="font-bold text-xl">214-306-9740</span>
           </div>
           <Button className="urgency-button font-semibold px-8 py-3 rounded-lg text-base w-full max-w-xs" onClick={() => document.getElementById('lead-form')?.scrollIntoView({
             behavior: 'smooth'

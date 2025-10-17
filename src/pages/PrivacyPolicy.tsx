@@ -135,7 +135,7 @@ const PrivacyPolicy = () => {
             <div className="bg-gray-50 p-6 rounded-lg">
               <p className="font-semibold text-primary mb-2">Reddtrow Properties, LLC</p>
               <p className="text-muted-foreground mb-1">Email: info@reddtrowproperties.com</p>
-              <p className="text-muted-foreground">Phone: (469) 939-9957</p>
+              <p className="text-muted-foreground">Phone: 214-306-9740</p>
             </div>
           </section>
         </div>
