@@ -304,8 +304,8 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       Accept: 'application/json',
       Version: '2021-07-28',
     };
-    // Location-Id header is ONLY required for PIT tokens, not for Private Integration tokens
-    if (isPit && bodyLocationId) {
+    // Location-Id header: include when we have a locationId (works for JWT and PIT)
+    if (bodyLocationId) {
       headers['Location-Id'] = bodyLocationId;
     }
 
