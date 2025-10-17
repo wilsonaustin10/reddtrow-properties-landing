@@ -13,7 +13,6 @@ const corsHeaders = {
 async function runBackgroundTask(task: () => Promise<void>, taskName: string) {
   try {
     await task();
-    console.log(`✅ ${taskName} completed successfully`);
   } catch (error) {
     console.error(`❌ ${taskName} failed:`, error);
   }
@@ -230,100 +229,86 @@ async function sendToZapier(webhookUrl: string, leadPayload: any, supabase: any,
 }
 
 async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload: any, supabase: any, leadId: string) {
+  const apiUrl = 'https://services.leadconnectorhq.com/contacts/';
+  const isPit = apiKey.startsWith('pit-');
+
   try {
-    console.log('🔗 Starting GHL API call for lead:', leadId);
+    console.log('🔗 Starting GHL v2 API call for lead:', leadId);
+    console.log('🔑 Token type:', isPit ? 'PIT' : 'Unknown');
 
-    const isPit = apiKey.startsWith('pit-');
-    const isJwt = /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(apiKey);
-
-    console.log('🔍 Token type detection:', { isPit, isJwt, locationIdProvided: !!locationId });
-
-    if (!isPit && !isJwt) {
-      throw new Error('Unsupported token type. Provide a PIT (starts with "pit-") or a JWT style Location API key.');
-    }
-
-    // Resolve locationId only for JWT keys
-    let bodyLocationId = '';
-    if (isJwt) {
-      bodyLocationId = (locationId || '').trim();
-      if (!bodyLocationId) {
-        try {
-          const parts = apiKey.split('.');
-          const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-          const json = JSON.parse(atob(base64));
-          bodyLocationId = json.location_id || json.locationId || '';
-          console.log('🧩 Extracted locationId from JWT:', bodyLocationId ? bodyLocationId.substring(0, 8) + '...' : '(none)');
-        } catch (e) {
-          console.log('⚠️ Could not decode JWT to extract locationId');
-        }
-      }
-    }
-
-
-    // Build minimal valid payload per docs (for v2 with PIT no locationId is needed)
-    const ghlPayload: Record<string, any> = {
+    // Build clean v2 payload - no customField object
+    const ghlPayload = {
       firstName: leadPayload.contact.first_name,
       lastName: leadPayload.contact.last_name,
       email: leadPayload.contact.email,
       phone: leadPayload.contact.phone,
       address1: leadPayload.property.address,
       tags: ['website-lead', 'cash-buyer', 'ppc'],
-      source: leadPayload.source || 'public api',
-    };
-    // Only for JWT include locationId in the body
-    if (isJwt && bodyLocationId) {
-      (ghlPayload as any).locationId = bodyLocationId;
-    }
-    // Optional custom fields (note: true custom field mapping in v2 usually requires field IDs)
-    (ghlPayload as any).customField = {
-      condition: leadPayload.property.condition,
-      property_listed: leadPayload.property.is_listed ? 'yes' : 'no',
-      timeline: leadPayload.property.timeline,
-      asking_price: leadPayload.property.asking_price
+      source: leadPayload.source || 'website_form',
     };
 
-    console.log('📤 Payload for GHL:', JSON.stringify(ghlPayload, null, 2));
+    console.log('📤 Payload:', JSON.stringify(ghlPayload, null, 2));
 
-    // Prepare headers & endpoint per docs
-    const headers: Record<string, string> = {
-      Authorization: `Bearer ${apiKey}`,
+    // Attempt 1: Raw PIT token (v2 standard)
+    let headers: Record<string, string> = {
+      'Authorization': apiKey,
       'Content-Type': 'application/json',
-      Accept: 'application/json',
-      Version: '2021-07-28',
+      'Accept': 'application/json',
+      'Version': '2021-07-28',
     };
-    // Location-Id header: only for JWT keys when available
-    if (isJwt && bodyLocationId) {
-      headers['Location-Id'] = bodyLocationId;
-    }
 
-    const apiUrl = 'https://services.leadconnectorhq.com/contacts/';
-
-    console.log('🏢 Using Location-Id header:', headers['Location-Id'] || '(none)');
-    console.log('🏷️ Body locationId:', bodyLocationId || '(none)');
-    console.log('🔑 Using API Key prefix:', apiKey.substring(0, 8) + '...');
-    console.log('🌐 Making request to:', apiUrl);
-
-    const response = await fetch(apiUrl, {
+    console.log('🚀 Attempt 1: Raw PIT Authorization');
+    let response = await fetch(apiUrl, {
       method: 'POST',
       headers,
       body: JSON.stringify(ghlPayload),
     });
 
-    const responseText = await response.text();
-    console.log('📥 GHL Response Status:', response.status);
-    console.log('📥 GHL Response Headers:', JSON.stringify([...response.headers.entries()]));
-    console.log('📥 GHL Response Body:', responseText.substring(0, 1000));
+    let responseText = await response.text();
+    console.log(`📥 Response Status: ${response.status}`);
+    console.log(`📥 Response Body: ${responseText.substring(0, 500)}`);
 
+    // Attempt 2: Fallback to Bearer prefix if 401/403
+    if ((response.status === 401 || response.status === 403) && isPit) {
+      console.log('🔄 Attempt 2: Trying with Bearer prefix');
+      headers['Authorization'] = `Bearer ${apiKey}`;
+      
+      response = await fetch(apiUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(ghlPayload),
+      });
+
+      responseText = await response.text();
+      console.log(`📥 Response Status: ${response.status}`);
+      console.log(`📥 Response Body: ${responseText.substring(0, 500)}`);
+    }
+
+    // Attempt 3: Add Location-Id header if still failing and locationId exists
+    if ((response.status === 401 || response.status === 403) && locationId && isPit) {
+      console.log('🔄 Attempt 3: Adding Location-Id header');
+      headers['Location-Id'] = locationId;
+      
+      response = await fetch(apiUrl, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify(ghlPayload),
+      });
+
+      responseText = await response.text();
+      console.log(`📥 Response Status: ${response.status}`);
+      console.log(`📥 Response Body: ${responseText.substring(0, 500)}`);
+    }
+
+    // Process final result
     if (response.ok) {
-      console.log('✅ Successfully sent lead to Go High Level');
-
       let contactId = 'unknown';
       try {
         const responseData = JSON.parse(responseText);
         contactId = responseData.contact?.id || responseData.id || 'unknown';
-        console.log('👤 Created GHL Contact ID:', contactId);
+        console.log('✅ SUCCESS - Contact ID:', contactId);
       } catch (_) {
-        console.log('⚠️ Could not parse GHL response as JSON');
+        console.log('✅ SUCCESS - Response not JSON');
       }
 
       await supabase
@@ -331,38 +316,38 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
         .update({
           ghl_sent: true,
           ghl_sent_at: new Date().toISOString(),
-          ghl_response: `Success - Contact ID: ${contactId} - ${responseText.substring(0, 300)}`
+          ghl_response: `Contact ID: ${contactId}`
         })
         .eq('id', leadId);
-    } else {
-      const errorDetails = `Status: ${response.status}, Body: ${responseText.substring(0, 1000)}`;
-      console.error('❌ Failed to send to Go High Level -', errorDetails);
 
-      await supabase
-        .from('leads')
-        .update({
-          ghl_sent: false,
-          ghl_error: `API Error - ${errorDetails}`,
-          ghl_sent_at: new Date().toISOString()
-        })
-        .eq('id', leadId);
+      return;
     }
+
+    // All attempts failed
+    const errorDetails = `Status ${response.status}: ${responseText.substring(0, 500)}`;
+    console.error('❌ FAILED after all attempts -', errorDetails);
+
+    await supabase
+      .from('leads')
+      .update({
+        ghl_sent: false,
+        ghl_error: errorDetails,
+        ghl_sent_at: new Date().toISOString()
+      })
+      .eq('id', leadId);
+
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error('💥 Exception in GHL API call:', msg);
+    console.error('💥 Exception:', msg);
 
-    try {
-      await supabase
-        .from('leads')
-        .update({
-          ghl_sent: false,
-          ghl_error: `Exception: ${msg}`,
-          ghl_sent_at: new Date().toISOString()
-        })
-        .eq('id', leadId);
-    } catch (dbError) {
-      console.error('Failed to update database with error:', dbError);
-    }
+    await supabase
+      .from('leads')
+      .update({
+        ghl_sent: false,
+        ghl_error: `Exception: ${msg}`,
+        ghl_sent_at: new Date().toISOString()
+      })
+      .eq('id', leadId);
   }
 }
 
