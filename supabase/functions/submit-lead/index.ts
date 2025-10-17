@@ -14,8 +14,20 @@ async function runBackgroundTask(task: () => Promise<void>, taskName: string) {
   try {
     await task();
   } catch (error) {
-    console.error(`❌ ${taskName} failed:`, error);
+    console.error(`${taskName} failed:`, error);
   }
+}
+
+// Helper to update lead GHL status in database
+async function updateLeadGhlStatus(supabase: any, leadId: string, success: boolean, message: string) {
+  await supabase
+    .from('leads')
+    .update({
+      ghl_sent: success,
+      [success ? 'ghl_response' : 'ghl_error']: message,
+      ghl_sent_at: new Date().toISOString()
+    })
+    .eq('id', leadId);
 }
 
 interface LeadData {
@@ -126,61 +138,21 @@ const handler = async (req: Request): Promise<Response> => {
       console.log('Zapier webhook URL not configured, skipping...');
     }
 
-    // Send to Go High Level API if configured
+    // Send to Go High Level API if configured with PIT token
     const ghlApiKey = config.integrations.ghl?.apiKey;
     const ghlLocationId = config.integrations.ghl?.locationId;
-
-    const isJwtLike = !!ghlApiKey && /^[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+\.[A-Za-z0-9-_]+$/.test(ghlApiKey);
-    const isPit = !!ghlApiKey && ghlApiKey.startsWith('pit-');
     
-    console.log('🔍 GHL Configuration Check:', {
-      hasApiKey: !!ghlApiKey,
-      hasLocationId: !!ghlLocationId,
-      apiKeyLength: ghlApiKey ? ghlApiKey.length : 0,
-      apiKeyPrefix: ghlApiKey ? ghlApiKey.substring(0, 4) : 'none',
-      locationIdLength: ghlLocationId ? ghlLocationId.length : 0,
-      locationIdPrefix: ghlLocationId ? ghlLocationId.substring(0, 8) : 'none',
-      tokenType: isPit ? 'PIT' : (isJwtLike ? 'JWT' : 'unknown')
-    });
-    
-    if (ghlApiKey) {
-      // Run GHL integration as background task with adaptive token handling
+    if (ghlApiKey && ghlApiKey.startsWith('pit-')) {
+      console.log('Starting GHL v2 integration with PIT token');
       runBackgroundTask(async () => {
-        console.log('🚀 Starting GHL integration for lead:', lead.id);
-
-        if (isPit) {
-          // V2 with PIT: no Location-Id header or body locationId required
-          await sendToGoHighLevel(ghlApiKey, '', leadPayload, supabase, lead.id);
-          return;
-        }
-
-        if (isJwtLike) {
-          const errorMsg = 'GHL v2 requires a Private Integration Token (PIT). Please update GHL_API_KEY to a PIT (starts with "pit-").';
-          console.log('❌ Validation failed:', errorMsg);
-          await supabase
-            .from('leads')
-            .update({ ghl_sent: false, ghl_error: errorMsg, ghl_sent_at: new Date().toISOString() })
-            .eq('id', lead.id);
-          return;
-        }
-
-        const errorMsg = 'Unsupported GHL token type. Provide a PIT token (starts with "pit-").';
-        console.log('❌ Validation failed:', errorMsg);
-        await supabase
-          .from('leads')
-          .update({ ghl_sent: false, ghl_error: errorMsg, ghl_sent_at: new Date().toISOString() })
-          .eq('id', lead.id);
+        await sendToGoHighLevel(ghlApiKey, ghlLocationId, leadPayload, supabase, lead.id);
       }, 'GHL Integration');
+    } else if (ghlApiKey) {
+      const errorMsg = 'GHL v2 requires a Private Integration Token (PIT). Please update GHL_API_KEY to a PIT token (starts with "pit-").';
+      console.log('Configuration error:', errorMsg);
+      await updateLeadGhlStatus(supabase, lead.id, false, errorMsg);
     } else {
-      console.log('❌ GHL configuration incomplete - missing: GHL_API_KEY');
-      await supabase
-        .from('leads')
-        .update({ 
-          ghl_sent: false, 
-          ghl_error: 'Configuration Error: Missing GHL_API_KEY',
-          ghl_sent_at: new Date().toISOString()
-        })
-        .eq('id', lead.id);
+      console.log('GHL API key not configured, skipping...');
     }
 
     return new Response(JSON.stringify({
@@ -221,22 +193,21 @@ async function sendToZapier(webhookUrl: string, leadPayload: any, supabase: any,
         })
         .eq('id', leadId);
     } else {
-      console.error('Failed to send to Zapier:', response.status, await response.text());
+      const errorText = await response.text();
+      console.error('Failed to send to Zapier:', response.status, errorText);
     }
   } catch (error) {
     console.error('Error sending to Zapier:', error);
   }
 }
 
-async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload: any, supabase: any, leadId: string) {
+async function sendToGoHighLevel(apiKey: string, locationId: string | undefined, leadPayload: any, supabase: any, leadId: string) {
   const apiUrl = 'https://services.leadconnectorhq.com/contacts/';
-  const isPit = apiKey.startsWith('pit-');
 
   try {
-    console.log('🔗 Starting GHL v2 API call for lead:', leadId);
-    console.log('🔑 Token type:', isPit ? 'PIT' : 'Unknown');
+    console.log('Starting GHL v2 API call for lead:', leadId);
 
-    // Build clean v2 payload - no customField object
+    // Build clean v2 payload
     const ghlPayload = {
       firstName: leadPayload.contact.first_name,
       lastName: leadPayload.contact.last_name,
@@ -247,8 +218,6 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       source: leadPayload.source || 'website_form',
     };
 
-    console.log('📤 Payload:', JSON.stringify(ghlPayload, null, 2));
-
     // Attempt 1: Raw PIT token (v2 standard)
     let headers: Record<string, string> = {
       'Authorization': apiKey,
@@ -257,7 +226,7 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       'Version': '2021-07-28',
     };
 
-    console.log('🚀 Attempt 1: Raw PIT Authorization');
+    console.log('Attempt 1: Raw PIT Authorization');
     let response = await fetch(apiUrl, {
       method: 'POST',
       headers,
@@ -265,12 +234,11 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
     });
 
     let responseText = await response.text();
-    console.log(`📥 Response Status: ${response.status}`);
-    console.log(`📥 Response Body: ${responseText.substring(0, 500)}`);
+    console.log('Response Status:', response.status);
 
     // Attempt 2: Fallback to Bearer prefix if 401/403
-    if ((response.status === 401 || response.status === 403) && isPit) {
-      console.log('🔄 Attempt 2: Trying with Bearer prefix');
+    if (response.status === 401 || response.status === 403) {
+      console.log('Attempt 2: Trying with Bearer prefix');
       headers['Authorization'] = `Bearer ${apiKey}`;
       
       response = await fetch(apiUrl, {
@@ -280,13 +248,12 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       });
 
       responseText = await response.text();
-      console.log(`📥 Response Status: ${response.status}`);
-      console.log(`📥 Response Body: ${responseText.substring(0, 500)}`);
+      console.log('Response Status:', response.status);
     }
 
     // Attempt 3: Add Location-Id header if still failing and locationId exists
-    if ((response.status === 401 || response.status === 403) && locationId && isPit) {
-      console.log('🔄 Attempt 3: Adding Location-Id header');
+    if ((response.status === 401 || response.status === 403) && locationId) {
+      console.log('Attempt 3: Adding Location-Id header');
       headers['Location-Id'] = locationId;
       
       response = await fetch(apiUrl, {
@@ -296,8 +263,7 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       });
 
       responseText = await response.text();
-      console.log(`📥 Response Status: ${response.status}`);
-      console.log(`📥 Response Body: ${responseText.substring(0, 500)}`);
+      console.log('Response Status:', response.status);
     }
 
     // Process final result
@@ -306,48 +272,24 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       try {
         const responseData = JSON.parse(responseText);
         contactId = responseData.contact?.id || responseData.id || 'unknown';
-        console.log('✅ SUCCESS - Contact ID:', contactId);
+        console.log('SUCCESS - Contact ID:', contactId);
       } catch (_) {
-        console.log('✅ SUCCESS - Response not JSON');
+        console.log('SUCCESS - Response not JSON');
       }
 
-      await supabase
-        .from('leads')
-        .update({
-          ghl_sent: true,
-          ghl_sent_at: new Date().toISOString(),
-          ghl_response: `Contact ID: ${contactId}`
-        })
-        .eq('id', leadId);
-
+      await updateLeadGhlStatus(supabase, leadId, true, `Contact ID: ${contactId}`);
       return;
     }
 
     // All attempts failed
     const errorDetails = `Status ${response.status}: ${responseText.substring(0, 500)}`;
-    console.error('❌ FAILED after all attempts -', errorDetails);
-
-    await supabase
-      .from('leads')
-      .update({
-        ghl_sent: false,
-        ghl_error: errorDetails,
-        ghl_sent_at: new Date().toISOString()
-      })
-      .eq('id', leadId);
+    console.error('FAILED after all attempts:', errorDetails);
+    await updateLeadGhlStatus(supabase, leadId, false, errorDetails);
 
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
-    console.error('💥 Exception:', msg);
-
-    await supabase
-      .from('leads')
-      .update({
-        ghl_sent: false,
-        ghl_error: `Exception: ${msg}`,
-        ghl_sent_at: new Date().toISOString()
-      })
-      .eq('id', leadId);
+    console.error('Exception in GHL integration:', msg);
+    await updateLeadGhlStatus(supabase, leadId, false, `Exception: ${msg}`);
   }
 }
 
