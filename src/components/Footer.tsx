@@ -1,6 +1,7 @@
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import emblemLogo from "@/assets/reddtrow-emblem.png";
+import bbbLogo from "@/assets/bbb-logo.jpg";
 const Footer = () => {
   return <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-12">
@@ -104,7 +105,20 @@ const Footer = () => {
             </div>
           </div>
           
-          <div className="text-center mt-6 pt-6 border-t border-primary-foreground/20">
+          <div className="text-center mt-6 pt-6 border-t border-primary-foreground/20 space-y-4">
+            <a 
+              href="https://www.bbb.org/us/tx/midlothian/profile/real-estate-investing/reddtrow-properties-llc-0875-90843940#bbbseal" 
+              target="_blank" 
+              rel="noopener noreferrer"
+              className="inline-block"
+            >
+              <img 
+                src={bbbLogo} 
+                alt="BBB Accredited Business" 
+                className="h-20 w-auto mx-auto hover:opacity-80 transition-opacity"
+              />
+            </a>
+            
             <p className="text-sm text-primary-foreground/60">
               We are professional real estate investors. We are not real estate agents. 
               We do not list houses. We buy houses directly from homeowners.
