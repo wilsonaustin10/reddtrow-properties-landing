@@ -218,6 +218,12 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       locationId: effectiveLocationId,
       tags: ['ppc'],
       source: leadPayload.source || 'website_form',
+      customField: {
+        asking_price: leadPayload.property.asking_price,
+        timeline: leadPayload.property.timeline,
+        property_listed: leadPayload.property.is_listed ? 'yes' : 'no',
+        condition: leadPayload.property.condition,
+      }
     };
     // Attempt 1: Raw PIT token (v2 standard)
     let headers: Record<string, string> = {
