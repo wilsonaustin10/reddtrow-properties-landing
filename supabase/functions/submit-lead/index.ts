@@ -230,31 +230,68 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
     const desiredKeysToValues: Record<string, string> = {
       'contact.asking_price': String(leadPayload.property.asking_price ?? ''),
       'contact.timeline': String(leadPayload.property.timeline ?? ''),
-      'contact.property_listed': String(leadPayload.property.is_listed ? 'yes' : 'no'),
+      'contact.property_listed': String(leadPayload.property.is_listed ? 'Yes' : 'No'),
       'contact.condition': String(leadPayload.property.condition ?? ''),
     };
 
-    let customFieldsPayload: Array<{ id: string; field_value: string }> = [];
+    // Fallback mapping by name (case-insensitive) if fieldKey doesn't match
+    const fallbackNameMap: Record<string, string> = {
+      'contact.asking_price': 'Asking Price',
+      'contact.timeline': 'Timeline',
+      'contact.property_listed': 'Property Listed',
+      'contact.condition': 'Condition',
+    };
+
+    let customFieldsPayload: Array<{ id: string; value: string }> = [];
     try {
       const cfData = JSON.parse(cfText);
       const available = Array.isArray(cfData.customFields) ? cfData.customFields : [];
+      console.log(`Found ${available.length} custom fields in GHL location`);
+      
       const idByKey: Record<string, string> = {};
+      const idByName: Record<string, string> = {};
+      
       for (const f of available) {
-        if (f && typeof f === 'object' && f.fieldKey && f.id) {
-          idByKey[f.fieldKey] = f.id;
+        if (f && typeof f === 'object' && f.id) {
+          if (f.fieldKey) {
+            idByKey[f.fieldKey] = f.id;
+          }
+          if (f.name && typeof f.name === 'string') {
+            idByName[f.name.toLowerCase()] = f.id;
+          }
         }
       }
+      
       for (const key of Object.keys(desiredKeysToValues)) {
-        const id = idByKey[key];
         const val = desiredKeysToValues[key];
-        if (id && val && val.trim() !== '') {
-          customFieldsPayload.push({ id, field_value: val });
+        if (!val || val.trim() === '') {
+          console.log(`Skipping custom field (empty value): ${key}`);
+          continue;
+        }
+        
+        let id = idByKey[key];
+        
+        // Fallback: match by name if fieldKey didn't work
+        if (!id && fallbackNameMap[key]) {
+          const fallbackName = fallbackNameMap[key].toLowerCase();
+          id = idByName[fallbackName];
+          if (id) {
+            console.log(`Matched custom field by name fallback: ${key} -> ${fallbackNameMap[key]}`);
+          }
+        }
+        
+        if (id) {
+          customFieldsPayload.push({ id, value: val });
+          console.log(`Added custom field: ${key} = ${val}`);
         } else {
-          console.log('Skipping custom field (not found or empty):', key);
+          console.log(`Custom field not found in GHL: ${key}`);
         }
       }
+      
+      console.log(`Successfully mapped ${customFieldsPayload.length} custom fields`);
     } catch (e) {
-      console.log('Failed to parse custom fields response; proceeding without custom fields');
+      console.error('Failed to parse custom fields response:', e);
+      console.log('Proceeding without custom fields');
     }
 
     const ghlPayload: any = {
