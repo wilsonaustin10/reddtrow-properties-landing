@@ -216,7 +216,7 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       phone: leadPayload.contact.phone,
       address1: leadPayload.property.address,
       locationId: effectiveLocationId,
-      tags: ['website-lead', 'cash-buyer', 'ppc'],
+      tags: ['ppc'],
       source: leadPayload.source || 'website_form',
     };
     // Attempt 1: Raw PIT token (v2 standard)
