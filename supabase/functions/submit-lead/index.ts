@@ -209,7 +209,55 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
 
     // Include required locationId per GHL docs
     const effectiveLocationId = locationId || 'unxTj89xWq1FbRdTt2rH';
-    const ghlPayload = {
+
+    // Fetch contact custom field IDs so we can map values correctly
+    const customFieldsUrl = `https://services.leadconnectorhq.com/locations/${effectiveLocationId}/customFields?model=contact`;
+    let cfHeaders: Record<string, string> = {
+      'Authorization': apiKey,
+      'Accept': 'application/json',
+      'Version': '2021-07-28',
+    };
+    console.log('Fetching GHL custom fields for location:', effectiveLocationId);
+    let cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });
+    let cfText = await cfResp.text();
+    if (cfResp.status === 401 || cfResp.status === 403) {
+      console.log('Custom fields fetch: retrying with Bearer prefix');
+      cfHeaders['Authorization'] = `Bearer ${apiKey}`;
+      cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });
+      cfText = await cfResp.text();
+    }
+
+    const desiredKeysToValues: Record<string, string> = {
+      'contact.asking_price': String(leadPayload.property.asking_price ?? ''),
+      'contact.timeline': String(leadPayload.property.timeline ?? ''),
+      'contact.property_listed': String(leadPayload.property.is_listed ? 'yes' : 'no'),
+      'contact.condition': String(leadPayload.property.condition ?? ''),
+    };
+
+    let customFieldsPayload: Array<{ id: string; field_value: string }> = [];
+    try {
+      const cfData = JSON.parse(cfText);
+      const available = Array.isArray(cfData.customFields) ? cfData.customFields : [];
+      const idByKey: Record<string, string> = {};
+      for (const f of available) {
+        if (f && typeof f === 'object' && f.fieldKey && f.id) {
+          idByKey[f.fieldKey] = f.id;
+        }
+      }
+      for (const key of Object.keys(desiredKeysToValues)) {
+        const id = idByKey[key];
+        const val = desiredKeysToValues[key];
+        if (id && val && val.trim() !== '') {
+          customFieldsPayload.push({ id, field_value: val });
+        } else {
+          console.log('Skipping custom field (not found or empty):', key);
+        }
+      }
+    } catch (e) {
+      console.log('Failed to parse custom fields response; proceeding without custom fields');
+    }
+
+    const ghlPayload: any = {
       firstName: leadPayload.contact.first_name,
       lastName: leadPayload.contact.last_name,
       email: leadPayload.contact.email,
@@ -218,12 +266,12 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       locationId: effectiveLocationId,
       tags: ['ppc'],
       source: leadPayload.source || 'website_form',
-      // Custom fields at root level - using exact GHL custom field keys
-      asking_price: leadPayload.property.asking_price,
-      timeline: leadPayload.property.timeline,
-      property_listed: leadPayload.property.is_listed ? 'yes' : 'no',
-      condition: leadPayload.property.condition,
     };
+
+    if (customFieldsPayload.length > 0) {
+      ghlPayload.customFields = customFieldsPayload;
+    }
+
     // Attempt 1: Raw PIT token (v2 standard)
     let headers: Record<string, string> = {
       'Authorization': apiKey,
