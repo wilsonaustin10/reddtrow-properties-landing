@@ -150,36 +150,22 @@ const handler = async (req: Request): Promise<Response> => {
         console.log('🚀 Starting GHL integration for lead:', lead.id);
 
         if (isPit) {
-          // PIT requires a Location-Id and must not look like a PIT
-          if (!ghlLocationId) {
-            const errorMsg = 'Missing GHL_LOCATION_ID for PIT token';
-            console.log('❌ Validation failed:', errorMsg);
-            await supabase
-              .from('leads')
-              .update({ ghl_sent: false, ghl_error: errorMsg, ghl_sent_at: new Date().toISOString() })
-              .eq('id', lead.id);
-            return;
-          }
-          if (ghlLocationId.startsWith('pit-')) {
-            const errorMsg = 'Location ID appears to be a PIT token instead of a Sub-Account ID';
-            console.log('❌ Validation failed:', errorMsg);
-            await supabase
-              .from('leads')
-              .update({ ghl_sent: false, ghl_error: errorMsg, ghl_sent_at: new Date().toISOString() })
-              .eq('id', lead.id);
-            return;
-          }
-          await sendToGoHighLevel(ghlApiKey, ghlLocationId, leadPayload, supabase, lead.id);
+          // V2 with PIT: no Location-Id header or body locationId required
+          await sendToGoHighLevel(ghlApiKey, '', leadPayload, supabase, lead.id);
           return;
         }
 
         if (isJwtLike) {
-          // JWT can work without Location-Id (embedded), pass if available
-          await sendToGoHighLevel(ghlApiKey, ghlLocationId || '', leadPayload, supabase, lead.id);
+          const errorMsg = 'GHL v2 requires a Private Integration Token (PIT). Please update GHL_API_KEY to a PIT (starts with "pit-").';
+          console.log('❌ Validation failed:', errorMsg);
+          await supabase
+            .from('leads')
+            .update({ ghl_sent: false, ghl_error: errorMsg, ghl_sent_at: new Date().toISOString() })
+            .eq('id', lead.id);
           return;
         }
 
-        const errorMsg = 'Unsupported GHL token type. Provide a PIT (starts with "pit-") or a JWT style Location API key.';
+        const errorMsg = 'Unsupported GHL token type. Provide a PIT token (starts with "pit-").';
         console.log('❌ Validation failed:', errorMsg);
         await supabase
           .from('leads')
@@ -256,30 +242,26 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       throw new Error('Unsupported token type. Provide a PIT (starts with "pit-") or a JWT style Location API key.');
     }
 
-    // Resolve locationId for request body
-    let bodyLocationId = (locationId || '').trim();
-    if (!bodyLocationId && isJwt) {
-      try {
-        const parts = apiKey.split('.');
-        const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
-        const json = JSON.parse(atob(base64));
-        bodyLocationId = json.location_id || json.locationId || '';
-        console.log('🧩 Extracted locationId from JWT:', bodyLocationId ? bodyLocationId.substring(0, 8) + '...' : '(none)');
-      } catch (e) {
-        console.log('⚠️ Could not decode JWT to extract locationId');
+    // Resolve locationId only for JWT keys
+    let bodyLocationId = '';
+    if (isJwt) {
+      bodyLocationId = (locationId || '').trim();
+      if (!bodyLocationId) {
+        try {
+          const parts = apiKey.split('.');
+          const base64 = parts[1].replace(/-/g, '+').replace(/_/g, '/');
+          const json = JSON.parse(atob(base64));
+          bodyLocationId = json.location_id || json.locationId || '';
+          console.log('🧩 Extracted locationId from JWT:', bodyLocationId ? bodyLocationId.substring(0, 8) + '...' : '(none)');
+        } catch (e) {
+          console.log('⚠️ Could not decode JWT to extract locationId');
+        }
       }
     }
 
-    if (isPit && !bodyLocationId) {
-      throw new Error('PIT token requires GHL_LOCATION_ID to be set.');
-    }
-    if (isPit && bodyLocationId.startsWith('pit-')) {
-      throw new Error('GHL_LOCATION_ID appears to be a PIT token, not a Location ID.');
-    }
 
-    // Build minimal valid payload per docs (locationId required)
+    // Build minimal valid payload per docs (for v2 with PIT no locationId is needed)
     const ghlPayload: Record<string, any> = {
-      locationId: bodyLocationId,
       firstName: leadPayload.contact.first_name,
       lastName: leadPayload.contact.last_name,
       email: leadPayload.contact.email,
@@ -287,12 +269,17 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       address1: leadPayload.property.address,
       tags: ['website-lead', 'cash-buyer', 'ppc'],
       source: leadPayload.source || 'public api',
-      customField: {
-        condition: leadPayload.property.condition,
-        property_listed: leadPayload.property.is_listed ? 'yes' : 'no',
-        timeline: leadPayload.property.timeline,
-        asking_price: leadPayload.property.asking_price
-      }
+    };
+    // Only for JWT include locationId in the body
+    if (isJwt && bodyLocationId) {
+      (ghlPayload as any).locationId = bodyLocationId;
+    }
+    // Optional custom fields (note: true custom field mapping in v2 usually requires field IDs)
+    (ghlPayload as any).customField = {
+      condition: leadPayload.property.condition,
+      property_listed: leadPayload.property.is_listed ? 'yes' : 'no',
+      timeline: leadPayload.property.timeline,
+      asking_price: leadPayload.property.asking_price
     };
 
     console.log('📤 Payload for GHL:', JSON.stringify(ghlPayload, null, 2));
@@ -304,8 +291,8 @@ async function sendToGoHighLevel(apiKey: string, locationId: string, leadPayload
       Accept: 'application/json',
       Version: '2021-07-28',
     };
-    // Location-Id header: include when we have a locationId (works for JWT and PIT)
-    if (bodyLocationId) {
+    // Location-Id header: only for JWT keys when available
+    if (isJwt && bodyLocationId) {
       headers['Location-Id'] = bodyLocationId;
     }
 
