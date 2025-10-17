@@ -106,28 +106,28 @@ const Testimonials = () => {
         </Carousel>
         
         <div className="text-center mt-12">
-          <div className="bg-primary/5 p-8 rounded-2xl max-w-2xl mx-auto">
-            <h3 className="text-2xl font-bold text-primary mb-4">
+          <div className="bg-primary/5 p-4 sm:p-6 md:p-8 rounded-2xl max-w-2xl mx-auto">
+            <h3 className="text-xl sm:text-2xl font-bold text-primary mb-3 sm:mb-4">
               Join Our Happy Homeowners
             </h3>
-            <p className="text-muted-foreground mb-6">
+            <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6">
               We've helped countless families in all situations sell their homes quickly and move on with their lives.
             </p>
-            <div className="grid grid-cols-3 gap-4 text-center mb-6">
+            <div className="grid grid-cols-3 gap-2 sm:gap-3 md:gap-4 text-center mb-4 sm:mb-6">
               <div>
-                <div className="text-3xl font-bold text-primary">Everyday</div>
-                <div className="text-sm text-muted-foreground">We Buy Houses</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">Everyday</div>
+                <div className="text-xs sm:text-sm text-muted-foreground leading-tight">We Buy Houses</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-primary">Millions</div>
-                <div className="text-sm text-muted-foreground">Paid to Homeowners</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">Millions</div>
+                <div className="text-xs sm:text-sm text-muted-foreground leading-tight">Paid to Homeowners</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-primary">26+</div>
-                <div className="text-sm text-muted-foreground">Years Experience</div>
+                <div className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">26+</div>
+                <div className="text-xs sm:text-sm text-muted-foreground leading-tight">Years Experience</div>
               </div>
             </div>
-            <a href="/testimonials" className="inline-block px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">
+            <a href="/testimonials" className="inline-block px-4 sm:px-6 py-2 sm:py-3 bg-primary text-primary-foreground rounded-lg text-sm sm:text-base font-semibold hover:bg-primary/90 transition-colors">
               Read All Testimonials
             </a>
           </div>
