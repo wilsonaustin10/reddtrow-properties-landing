@@ -253,10 +253,9 @@ async function sendToGoHighLevel(
     };
 
     const paginationVariants: Array<{ params: Record<string, string>; description: string }> = [
-      { params: { model: 'contact' }, description: 'model=contact' },
-      { params: {}, description: 'no query params' },
       { params: { model: 'contact', limit: '200' }, description: 'model=contact&limit=200' },
       { params: { model: 'contact', pageSize: '200' }, description: 'model=contact&pageSize=200' },
+      { params: { model: 'contact' }, description: 'model=contact (no pagination params)' },
     ];
 
     let cfResp: Response | undefined;
@@ -292,8 +291,10 @@ async function sendToGoHighLevel(
     if (!cfResp) {
       throw new Error('Failed to contact GHL custom fields endpoint');
     }
-
-    let cfData: any | undefined;
+    
+    console.log('Fetching GHL custom fields for location:', locationId);
+    const cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });
+    const cfText = await cfResp.text();
 
     if (!cfResp.ok) {
       console.error(`Custom fields fetch failed (${lastCustomFieldsUrl}): ${cfResp.status} ${cfText.substring(0, 200)}`);
@@ -303,42 +304,6 @@ async function sendToGoHighLevel(
         console.error('⚠️  403 Forbidden: Verify that the PIT token has access to this location and has contacts.write scope');
       } else if (cfResp.status === 422) {
         console.error('⚠️  422 Unprocessable Entity from custom fields endpoint. Verify the token scopes and pagination parameters');
-
-        try {
-          const parsed = JSON.parse(cfText);
-          const hasLimitComplaint = Array.isArray(parsed?.message)
-            ? parsed.message.some((msg: string) => typeof msg === 'string' && msg.toLowerCase().includes('limit'))
-            : false;
-
-          if (hasLimitComplaint) {
-            console.warn('Attempting custom field lookup via search endpoint without pagination parameters.');
-            const searchUrl = `${customFieldsBaseUrl}/search`;
-            const searchResp = await fetch(searchUrl, {
-              method: 'POST',
-              headers: {
-                ...cfHeaders,
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ model: 'contact' }),
-            });
-
-            const searchText = await searchResp.text();
-
-            if (searchResp.ok) {
-              lastCustomFieldsUrl = `${searchUrl} [POST]`;
-              cfResp = searchResp;
-              cfText = searchText;
-              cfData = JSON.parse(searchText);
-              console.log('Successfully fetched custom fields via search endpoint.');
-            } else {
-              console.error(
-                `Custom fields search endpoint failed (${searchUrl}): ${searchResp.status} ${searchText.substring(0, 200)}`
-              );
-            }
-          }
-        } catch (parseError) {
-          console.warn('Unable to parse 422 response body for additional guidance.', parseError);
-        }
       }
     }
 
@@ -390,8 +355,58 @@ async function sendToGoHighLevel(
 
     if (cfResp.ok) {
       try {
-        const cfDataToUse = cfData ?? JSON.parse(cfText);
-        const available = Array.isArray(cfDataToUse.customFields) ? cfDataToUse.customFields : [];
+        const cfData = JSON.parse(cfText);
+        const available = Array.isArray(cfData.customFields) ? cfData.customFields : [];
+        console.log(`✅ Found ${available.length} custom fields in GHL location`);
+
+        // Log each custom field for debugging
+        if (available.length > 0) {
+          console.log('Available custom fields:');
+          for (const f of available.slice(0, 10)) { // Log first 10
+            console.log(`  - ID: ${f.id}, Name: "${f.name}", Key: "${f.fieldKey || 'N/A'}"`);
+          }
+          if (available.length > 10) {
+            console.log(`  ... and ${available.length - 10} more`);
+          }
+        } else {
+          console.warn('⚠️  No custom fields found. Create custom fields in GHL for asking_price, timeline, condition, property_listed');
+        }
+
+        for (const f of available) {
+          if (f && typeof f === 'object' && f.id) {
+            if (f.fieldKey) {
+              registerKey(f.fieldKey, f.id);
+            }
+            if (f.name && typeof f.name === 'string') {
+              registerName(f.name, f.id);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse custom fields response:', e);
+        console.log('Proceeding with configured custom field IDs only');
+      }
+    } else {
+      console.log('Proceeding with configured custom field IDs only (API lookup unavailable)');
+    }
+
+    const addOverride = (label: string, id: string | undefined, keys: string[], names: string[]) => {
+      if (!id) return;
+      console.log(`Using configured custom field ID for ${label}: ${id}`);
+      for (const key of keys) {
+        registerKey(key, id);
+      }
+      for (const name of names) {
+        registerName(name, id);
+      }
+    };
+
+    };
+
+    if (cfResp.ok) {
+      try {
+        const cfData = JSON.parse(cfText);
+        const available = Array.isArray(cfData.customFields) ? cfData.customFields : [];
         console.log(`✅ Found ${available.length} custom fields in GHL location`);
 
         // Log each custom field for debugging
