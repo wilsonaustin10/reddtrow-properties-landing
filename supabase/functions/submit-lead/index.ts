@@ -245,18 +245,23 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
     }
 
     // Map lead data to custom field keys with proper type handling
+    // Support both snake_case and camelCase variations that GHL auto-generates
     const desiredKeysToValues: Record<string, string> = {
       'contact.asking_price': String(leadPayload.property.asking_price ?? ''),
+      'contact.askingPrice': String(leadPayload.property.asking_price ?? ''), // camelCase variant
       'contact.timeline': String(leadPayload.property.timeline ?? ''),
-      'contact.property_listed': leadPayload.property.is_listed ? 'Yes' : 'No', // Send text, not boolean
+      'contact.property_listed': leadPayload.property.is_listed ? 'Yes' : 'No',
+      'contact.propertyListed': leadPayload.property.is_listed ? 'Yes' : 'No', // camelCase variant
       'contact.condition': String(leadPayload.property.condition ?? ''),
     };
 
     // Fallback mapping by name (case-insensitive) if fieldKey doesn't match
     const fallbackNameMap: Record<string, string> = {
       'contact.asking_price': 'Asking Price',
+      'contact.askingPrice': 'Asking Price',
       'contact.timeline': 'Timeline',
       'contact.property_listed': 'Property Listed',
+      'contact.propertyListed': 'Property Listed',
       'contact.condition': 'Condition',
     };
 
