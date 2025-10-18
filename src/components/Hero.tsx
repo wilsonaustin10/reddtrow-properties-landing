@@ -189,7 +189,7 @@ const Hero = () => {
                   <a href="/privacy-policy" className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
                     Privacy Policy
                   </a>
-                  . By submitting this form, you consent to receive SMS messages and/or emails and/or calls from us. Message frequency varies. To unsubscribe, follow the instructions provided in our communications. Msg & data rates may apply for SMS. Your information is secure and will not be sold to third parties. Text HELP for HELP, text STOP to cancel.
+                  . By submitting this form, you consent to receive SMS messages and/or emails and/or calls from Reddtrow Properties LLC. Message frequency varies. To unsubscribe, follow the instructions provided in our communications. Msg & data rates may apply for SMS. Your information is secure and will not be sold to third parties. Text HELP for HELP, text STOP to cancel.
                 </Label>
               </div>
             )}
