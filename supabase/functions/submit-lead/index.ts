@@ -244,26 +244,36 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       }
     }
 
+    const normalizeIdentifier = (value: string) => value.replace(/[^a-z0-9]/gi, '').toLowerCase();
+
     // Map lead data to custom field keys with proper type handling
     // Support both snake_case and camelCase variations that GHL auto-generates
-    const desiredKeysToValues: Record<string, string> = {
-      'contact.asking_price': String(leadPayload.property.asking_price ?? ''),
-      'contact.askingPrice': String(leadPayload.property.asking_price ?? ''), // camelCase variant
-      'contact.timeline': String(leadPayload.property.timeline ?? ''),
-      'contact.property_listed': leadPayload.property.is_listed ? 'Yes' : 'No',
-      'contact.propertyListed': leadPayload.property.is_listed ? 'Yes' : 'No', // camelCase variant
-      'contact.condition': String(leadPayload.property.condition ?? ''),
-    };
-
-    // Fallback mapping by name (case-insensitive) if fieldKey doesn't match
-    const fallbackNameMap: Record<string, string> = {
-      'contact.asking_price': 'Asking Price',
-      'contact.askingPrice': 'Asking Price',
-      'contact.timeline': 'Timeline',
-      'contact.property_listed': 'Property Listed',
-      'contact.propertyListed': 'Property Listed',
-      'contact.condition': 'Condition',
-    };
+    const customFieldDefinitions: Array<{
+      value: string;
+      keys: string[];
+      names: string[];
+    }> = [
+      {
+        value: String(leadPayload.property.asking_price ?? ''),
+        keys: ['contact.asking_price', 'contact.askingPrice'],
+        names: ['Asking Price']
+      },
+      {
+        value: String(leadPayload.property.timeline ?? ''),
+        keys: ['contact.timeline', 'contact.propertyTimeline'],
+        names: ['Timeline']
+      },
+      {
+        value: leadPayload.property.is_listed ? 'Yes' : 'No',
+        keys: ['contact.property_listed', 'contact.propertyListed'],
+        names: ['Property Listed']
+      },
+      {
+        value: String(leadPayload.property.condition ?? ''),
+        keys: ['contact.condition', 'contact.propertyCondition'],
+        names: ['Condition']
+      }
+    ];
 
     let customFieldsPayload: Array<{ id: string; value: string }> = [];
     try {
@@ -286,41 +296,72 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       
       const idByKey: Record<string, string> = {};
       const idByName: Record<string, string> = {};
-      
+      const normalizedIdByKey: Record<string, string> = {};
+      const normalizedIdByName: Record<string, string> = {};
+
       for (const f of available) {
         if (f && typeof f === 'object' && f.id) {
           if (f.fieldKey) {
             idByKey[f.fieldKey] = f.id;
+            normalizedIdByKey[normalizeIdentifier(String(f.fieldKey))] = f.id;
           }
           if (f.name && typeof f.name === 'string') {
             idByName[f.name.toLowerCase()] = f.id;
+            normalizedIdByName[normalizeIdentifier(f.name)] = f.id;
           }
         }
       }
-      
-      for (const key of Object.keys(desiredKeysToValues)) {
-        const val = desiredKeysToValues[key];
+
+      for (const { value: val, keys, names } of customFieldDefinitions) {
         if (!val || val.trim() === '') {
-          console.log(`Skipping custom field (empty value): ${key}`);
+          console.log('Skipping custom field (empty value)');
           continue;
         }
-        
-        let id = idByKey[key];
-        
-        // Fallback: match by name if fieldKey didn't work
-        if (!id && fallbackNameMap[key]) {
-          const fallbackName = fallbackNameMap[key].toLowerCase();
-          id = idByName[fallbackName];
-          if (id) {
-            console.log(`Matched custom field by name fallback: ${key} -> ${fallbackNameMap[key]}`);
+
+        let matchedKey: string | undefined;
+        let id: string | undefined;
+
+        for (const key of keys) {
+          if (idByKey[key]) {
+            matchedKey = key;
+            id = idByKey[key];
+            break;
+          }
+
+          const normalizedKey = normalizeIdentifier(key);
+          if (!id && normalizedIdByKey[normalizedKey]) {
+            matchedKey = key;
+            id = normalizedIdByKey[normalizedKey];
+            break;
           }
         }
-        
+
+        // Fallback: match by name if fieldKey didn't work
+        if (!id) {
+          for (const name of names) {
+            const lowerName = name.toLowerCase();
+            if (idByName[lowerName]) {
+              id = idByName[lowerName];
+              matchedKey = name;
+              console.log(`Matched custom field by name fallback: ${name}`);
+              break;
+            }
+
+            const normalizedName = normalizeIdentifier(name);
+            if (!id && normalizedIdByName[normalizedName]) {
+              id = normalizedIdByName[normalizedName];
+              matchedKey = name;
+              console.log(`Matched custom field by normalized name fallback: ${name}`);
+              break;
+            }
+          }
+        }
+
         if (id) {
           customFieldsPayload.push({ id, value: val });
-          console.log(`Added custom field: ${key} = ${val}`);
+          console.log(`Added custom field: ${matchedKey ?? 'unknown'} = ${val}`);
         } else {
-          console.log(`Custom field not found in GHL: ${key}`);
+          console.log(`Custom field not found in GHL for keys: ${keys.join(', ')}`);
         }
       }
       
