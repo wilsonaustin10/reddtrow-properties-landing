@@ -10,6 +10,7 @@ import TermsConditions from "./pages/TermsConditions";
 import About from "./pages/About";
 import ThankYou from "./pages/ThankYou";
 import Testimonials from "./pages/Testimonials";
+import GhlDiagnostic from "./pages/GhlDiagnostic";
 
 const queryClient = new QueryClient();
 
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/thank-you" element={<ThankYou />} />
+          <Route path="/ghl-diagnostic" element={<GhlDiagnostic />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
