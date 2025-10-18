@@ -21,6 +21,12 @@ export interface EdgeFunctionConfig {
     ghl?: {
       apiKey: string;
       locationId?: string;
+      customFieldIds?: {
+        askingPrice?: string;
+        timeline?: string;
+        propertyListed?: string;
+        condition?: string;
+      };
     };
   };
   analytics?: {
@@ -62,10 +68,24 @@ export function getEdgeFunctionConfig(): EdgeFunctionConfig {
   // Optional Go High Level integration
   const ghlApiKey = Deno.env.get('GHL_API_KEY');
   const ghlLocationId = Deno.env.get('GHL_LOCATION_ID');
+  const ghlCustomFieldAskingPrice = Deno.env.get('GHL_CUSTOM_FIELD_ASKING_PRICE_ID');
+  const ghlCustomFieldTimeline = Deno.env.get('GHL_CUSTOM_FIELD_TIMELINE_ID');
+  const ghlCustomFieldPropertyListed = Deno.env.get('GHL_CUSTOM_FIELD_PROPERTY_LISTED_ID');
+  const ghlCustomFieldCondition = Deno.env.get('GHL_CUSTOM_FIELD_CONDITION_ID');
   if (ghlApiKey && ghlApiKey.trim()) {
+    const customFieldIds = {
+      askingPrice: ghlCustomFieldAskingPrice?.trim(),
+      timeline: ghlCustomFieldTimeline?.trim(),
+      propertyListed: ghlCustomFieldPropertyListed?.trim(),
+      condition: ghlCustomFieldCondition?.trim()
+    };
+
+    const hasCustomFieldOverrides = Object.values(customFieldIds).some(Boolean);
+
     config.integrations.ghl = {
       apiKey: ghlApiKey.trim(),
-      locationId: ghlLocationId?.trim()
+      locationId: ghlLocationId?.trim(),
+      customFieldIds: hasCustomFieldOverrides ? customFieldIds : undefined
     };
   }
 

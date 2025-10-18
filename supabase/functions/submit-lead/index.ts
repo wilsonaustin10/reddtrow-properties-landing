@@ -145,7 +145,14 @@ const handler = async (req: Request): Promise<Response> => {
     if (ghlApiKey && ghlApiKey.startsWith('pit-')) {
       console.log('Starting GHL v2 integration with PIT token');
       runBackgroundTask(async () => {
-        await sendToGoHighLevel(ghlApiKey, ghlLocationId, leadPayload, supabase, lead.id);
+        await sendToGoHighLevel(
+          ghlApiKey,
+          ghlLocationId,
+          leadPayload,
+          supabase,
+          lead.id,
+          config.integrations.ghl?.customFieldIds
+        );
       }, 'GHL Integration');
     } else if (ghlApiKey) {
       const errorMsg = 'GHL v2 requires a Private Integration Token (PIT). Please update GHL_API_KEY to a PIT token (starts with "pit-").';
@@ -201,7 +208,21 @@ async function sendToZapier(webhookUrl: string, leadPayload: any, supabase: any,
   }
 }
 
-async function sendToGoHighLevel(apiKey: string, locationId: string | undefined, leadPayload: any, supabase: any, leadId: string) {
+type CustomFieldOverrideConfig = {
+  askingPrice?: string;
+  timeline?: string;
+  propertyListed?: string;
+  condition?: string;
+};
+
+async function sendToGoHighLevel(
+  apiKey: string,
+  locationId: string | undefined,
+  leadPayload: any,
+  supabase: any,
+  leadId: string,
+  customFieldOverrides?: CustomFieldOverrideConfig
+) {
   // Use /contacts/upsert per GHL v2 best practices (respects duplicate settings)
   const apiUrl = 'https://services.leadconnectorhq.com/contacts/upsert';
 
@@ -234,7 +255,7 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
     console.log('Fetching GHL custom fields for location:', locationId);
     const cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });
     const cfText = await cfResp.text();
-    
+
     if (!cfResp.ok) {
       console.error(`Custom fields fetch failed: ${cfResp.status} ${cfText.substring(0, 200)}`);
       if (cfResp.status === 401) {
@@ -275,101 +296,130 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       }
     ];
 
-    let customFieldsPayload: Array<{ id: string; value: string }> = [];
-    try {
-      const cfData = JSON.parse(cfText);
-      const available = Array.isArray(cfData.customFields) ? cfData.customFields : [];
-      console.log(`✅ Found ${available.length} custom fields in GHL location`);
-      
-      // Log each custom field for debugging
-      if (available.length > 0) {
-        console.log('Available custom fields:');
-        for (const f of available.slice(0, 10)) { // Log first 10
-          console.log(`  - ID: ${f.id}, Name: "${f.name}", Key: "${f.fieldKey || 'N/A'}"`);
-        }
-        if (available.length > 10) {
-          console.log(`  ... and ${available.length - 10} more`);
-        }
-      } else {
-        console.warn('⚠️  No custom fields found. Create custom fields in GHL for asking_price, timeline, condition, property_listed');
-      }
-      
-      const idByKey: Record<string, string> = {};
-      const idByName: Record<string, string> = {};
-      const normalizedIdByKey: Record<string, string> = {};
-      const normalizedIdByName: Record<string, string> = {};
+    const idByKey: Record<string, string> = {};
+    const idByName: Record<string, string> = {};
+    const normalizedIdByKey: Record<string, string> = {};
+    const normalizedIdByName: Record<string, string> = {};
 
-      for (const f of available) {
-        if (f && typeof f === 'object' && f.id) {
-          if (f.fieldKey) {
-            idByKey[f.fieldKey] = f.id;
-            normalizedIdByKey[normalizeIdentifier(String(f.fieldKey))] = f.id;
+    const registerKey = (key: string, id: string) => {
+      idByKey[key] = id;
+      normalizedIdByKey[normalizeIdentifier(key)] = id;
+    };
+
+    const registerName = (name: string, id: string) => {
+      idByName[name.toLowerCase()] = id;
+      normalizedIdByName[normalizeIdentifier(name)] = id;
+    };
+
+    if (cfResp.ok) {
+      try {
+        const cfData = JSON.parse(cfText);
+        const available = Array.isArray(cfData.customFields) ? cfData.customFields : [];
+        console.log(`✅ Found ${available.length} custom fields in GHL location`);
+
+        // Log each custom field for debugging
+        if (available.length > 0) {
+          console.log('Available custom fields:');
+          for (const f of available.slice(0, 10)) { // Log first 10
+            console.log(`  - ID: ${f.id}, Name: "${f.name}", Key: "${f.fieldKey || 'N/A'}"`);
           }
-          if (f.name && typeof f.name === 'string') {
-            idByName[f.name.toLowerCase()] = f.id;
-            normalizedIdByName[normalizeIdentifier(f.name)] = f.id;
+          if (available.length > 10) {
+            console.log(`  ... and ${available.length - 10} more`);
           }
-        }
-      }
-
-      for (const { value: val, keys, names } of customFieldDefinitions) {
-        if (!val || val.trim() === '') {
-          console.log('Skipping custom field (empty value)');
-          continue;
-        }
-
-        let matchedKey: string | undefined;
-        let id: string | undefined;
-
-        for (const key of keys) {
-          if (idByKey[key]) {
-            matchedKey = key;
-            id = idByKey[key];
-            break;
-          }
-
-          const normalizedKey = normalizeIdentifier(key);
-          if (!id && normalizedIdByKey[normalizedKey]) {
-            matchedKey = key;
-            id = normalizedIdByKey[normalizedKey];
-            break;
-          }
-        }
-
-        // Fallback: match by name if fieldKey didn't work
-        if (!id) {
-          for (const name of names) {
-            const lowerName = name.toLowerCase();
-            if (idByName[lowerName]) {
-              id = idByName[lowerName];
-              matchedKey = name;
-              console.log(`Matched custom field by name fallback: ${name}`);
-              break;
-            }
-
-            const normalizedName = normalizeIdentifier(name);
-            if (!id && normalizedIdByName[normalizedName]) {
-              id = normalizedIdByName[normalizedName];
-              matchedKey = name;
-              console.log(`Matched custom field by normalized name fallback: ${name}`);
-              break;
-            }
-          }
-        }
-
-        if (id) {
-          customFieldsPayload.push({ id, value: val });
-          console.log(`Added custom field: ${matchedKey ?? 'unknown'} = ${val}`);
         } else {
-          console.log(`Custom field not found in GHL for keys: ${keys.join(', ')}`);
+          console.warn('⚠️  No custom fields found. Create custom fields in GHL for asking_price, timeline, condition, property_listed');
+        }
+
+        for (const f of available) {
+          if (f && typeof f === 'object' && f.id) {
+            if (f.fieldKey) {
+              registerKey(f.fieldKey, f.id);
+            }
+            if (f.name && typeof f.name === 'string') {
+              registerName(f.name, f.id);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse custom fields response:', e);
+        console.log('Proceeding with configured custom field IDs only');
+      }
+    } else {
+      console.log('Proceeding with configured custom field IDs only (API lookup unavailable)');
+    }
+
+    const addOverride = (label: string, id: string | undefined, keys: string[], names: string[]) => {
+      if (!id) return;
+      console.log(`Using configured custom field ID for ${label}: ${id}`);
+      for (const key of keys) {
+        registerKey(key, id);
+      }
+      for (const name of names) {
+        registerName(name, id);
+      }
+    };
+
+    addOverride('asking_price', customFieldOverrides?.askingPrice, ['contact.asking_price', 'contact.askingPrice'], ['Asking Price']);
+    addOverride('timeline', customFieldOverrides?.timeline, ['contact.timeline', 'contact.propertyTimeline'], ['Timeline']);
+    addOverride('property_listed', customFieldOverrides?.propertyListed, ['contact.property_listed', 'contact.propertyListed'], ['Property Listed']);
+    addOverride('condition', customFieldOverrides?.condition, ['contact.condition', 'contact.propertyCondition'], ['Condition']);
+
+    let customFieldsPayload: Array<{ id: string; value: string }> = [];
+
+    for (const { value: val, keys, names } of customFieldDefinitions) {
+      if (!val || val.trim() === '') {
+        console.log('Skipping custom field (empty value)');
+        continue;
+      }
+
+      let matchedKey: string | undefined;
+      let id: string | undefined;
+
+      for (const key of keys) {
+        if (idByKey[key]) {
+          matchedKey = key;
+          id = idByKey[key];
+          break;
+        }
+
+        const normalizedKey = normalizeIdentifier(key);
+        if (!id && normalizedIdByKey[normalizedKey]) {
+          matchedKey = key;
+          id = normalizedIdByKey[normalizedKey];
+          break;
         }
       }
-      
-      console.log(`Successfully mapped ${customFieldsPayload.length} custom fields`);
-    } catch (e) {
-      console.error('Failed to parse custom fields response:', e);
-      console.log('Proceeding without custom fields');
+
+      // Fallback: match by name if fieldKey didn't work
+      if (!id) {
+        for (const name of names) {
+          const lowerName = name.toLowerCase();
+          if (idByName[lowerName]) {
+            id = idByName[lowerName];
+            matchedKey = name;
+            console.log(`Matched custom field by name fallback: ${name}`);
+            break;
+          }
+
+          const normalizedName = normalizeIdentifier(name);
+          if (!id && normalizedIdByName[normalizedName]) {
+            id = normalizedIdByName[normalizedName];
+            matchedKey = name;
+            console.log(`Matched custom field by normalized name fallback: ${name}`);
+            break;
+          }
+        }
+      }
+
+      if (id) {
+        customFieldsPayload.push({ id, value: val });
+        console.log(`Added custom field: ${matchedKey ?? 'unknown'} = ${val}`);
+      } else {
+        console.log(`Custom field not found in GHL for keys: ${keys.join(', ')}`);
+      }
     }
+
+    console.log(`Successfully mapped ${customFieldsPayload.length} custom fields`);
 
     // Normalize phone to E.164 format (+1XXXXXXXXXX for US)
     let normalizedPhone = leadPayload.contact.phone;
