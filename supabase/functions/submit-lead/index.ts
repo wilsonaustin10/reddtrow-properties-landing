@@ -291,6 +291,10 @@ async function sendToGoHighLevel(
     if (!cfResp) {
       throw new Error('Failed to contact GHL custom fields endpoint');
     }
+    
+    console.log('Fetching GHL custom fields for location:', locationId);
+    const cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });
+    const cfText = await cfResp.text();
 
     if (!cfResp.ok) {
       console.error(`Custom fields fetch failed (${lastCustomFieldsUrl}): ${cfResp.status} ${cfText.substring(0, 200)}`);
@@ -347,6 +351,56 @@ async function sendToGoHighLevel(
     const registerName = (name: string, id: string) => {
       idByName[name.toLowerCase()] = id;
       normalizedIdByName[normalizeIdentifier(name)] = id;
+    };
+
+    if (cfResp.ok) {
+      try {
+        const cfData = JSON.parse(cfText);
+        const available = Array.isArray(cfData.customFields) ? cfData.customFields : [];
+        console.log(`✅ Found ${available.length} custom fields in GHL location`);
+
+        // Log each custom field for debugging
+        if (available.length > 0) {
+          console.log('Available custom fields:');
+          for (const f of available.slice(0, 10)) { // Log first 10
+            console.log(`  - ID: ${f.id}, Name: "${f.name}", Key: "${f.fieldKey || 'N/A'}"`);
+          }
+          if (available.length > 10) {
+            console.log(`  ... and ${available.length - 10} more`);
+          }
+        } else {
+          console.warn('⚠️  No custom fields found. Create custom fields in GHL for asking_price, timeline, condition, property_listed');
+        }
+
+        for (const f of available) {
+          if (f && typeof f === 'object' && f.id) {
+            if (f.fieldKey) {
+              registerKey(f.fieldKey, f.id);
+            }
+            if (f.name && typeof f.name === 'string') {
+              registerName(f.name, f.id);
+            }
+          }
+        }
+      } catch (e) {
+        console.error('Failed to parse custom fields response:', e);
+        console.log('Proceeding with configured custom field IDs only');
+      }
+    } else {
+      console.log('Proceeding with configured custom field IDs only (API lookup unavailable)');
+    }
+
+    const addOverride = (label: string, id: string | undefined, keys: string[], names: string[]) => {
+      if (!id) return;
+      console.log(`Using configured custom field ID for ${label}: ${id}`);
+      for (const key of keys) {
+        registerKey(key, id);
+      }
+      for (const name of names) {
+        registerName(name, id);
+      }
+    };
+
     };
 
     if (cfResp.ok) {
