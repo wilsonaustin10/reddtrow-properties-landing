@@ -244,10 +244,11 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       }
     }
 
+    // Map lead data to custom field keys with proper type handling
     const desiredKeysToValues: Record<string, string> = {
       'contact.asking_price': String(leadPayload.property.asking_price ?? ''),
       'contact.timeline': String(leadPayload.property.timeline ?? ''),
-      'contact.property_listed': String(leadPayload.property.is_listed ? 'Yes' : 'No'),
+      'contact.property_listed': leadPayload.property.is_listed ? 'Yes' : 'No', // Send text, not boolean
       'contact.condition': String(leadPayload.property.condition ?? ''),
     };
 
@@ -324,11 +325,25 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       console.log('Proceeding without custom fields');
     }
 
+    // Normalize phone to E.164 format (+1XXXXXXXXXX for US)
+    let normalizedPhone = leadPayload.contact.phone;
+    if (normalizedPhone && !normalizedPhone.startsWith('+')) {
+      // Remove any non-digit characters
+      const digits = normalizedPhone.replace(/\D/g, '');
+      // Add +1 prefix for US numbers (10 digits)
+      if (digits.length === 10) {
+        normalizedPhone = `+1${digits}`;
+      } else if (digits.length === 11 && digits.startsWith('1')) {
+        normalizedPhone = `+${digits}`;
+      }
+      console.log(`Normalized phone: ${leadPayload.contact.phone} -> ${normalizedPhone}`);
+    }
+
     const ghlPayload: any = {
       firstName: leadPayload.contact.first_name,
       lastName: leadPayload.contact.last_name,
       email: leadPayload.contact.email,
-      phone: leadPayload.contact.phone,
+      phone: normalizedPhone,
       address1: leadPayload.property.address,
       locationId: locationId,
       tags: ['ppc'],
@@ -375,15 +390,16 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       return;
     }
 
-    // Failed - provide actionable error messages
+    // Failed - provide actionable error messages with full response for debugging
+    console.error('GHL Response Body:', responseText);
     let errorDetails = `Status ${response.status}: ${responseText.substring(0, 500)}`;
     
     if (response.status === 401) {
-      errorDetails = `401 Unauthorized - Check that GHL_API_KEY is a valid PIT token starting with "pit-". ${responseText.substring(0, 200)}`;
+      errorDetails = `401 Unauthorized - Check that GHL_API_KEY is a valid PIT token starting with "pit-" and has required scopes (contacts.write, contacts.readonly, contacts/customFields.readonly). ${responseText.substring(0, 200)}`;
     } else if (response.status === 403) {
-      errorDetails = `403 Forbidden - Verify: 1) PIT has contacts.write scope, 2) PIT has access to location ${locationId}. ${responseText.substring(0, 200)}`;
+      errorDetails = `403 Forbidden - Verify: 1) PIT has contacts.write scope, 2) PIT has access to location ${locationId}, 3) Custom field scopes are granted. ${responseText.substring(0, 200)}`;
     } else if (response.status === 422) {
-      errorDetails = `422 Validation Error - Check payload format. ${responseText.substring(0, 300)}`;
+      errorDetails = `422 Validation Error - Check: 1) Email format valid, 2) Phone in E.164 format (+1XXXXXXXXXX), 3) Custom field types match (text/select/checkbox). ${responseText.substring(0, 300)}`;
     }
     
     console.error('❌ FAILED:', errorDetails);
