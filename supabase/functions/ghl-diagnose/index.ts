@@ -107,15 +107,34 @@ serve(async (req: Request) => {
     console.log('Users/me status:', usersMeRes.status);
     console.log('Users/me body (first 300 chars):', usersMeText.substring(0, 300));
 
-    // Test custom fields for the provided location (optional but useful)
+    // Test custom fields for the provided location (critical for lead submissions)
+    let customFieldsRes = null;
+    let customFieldsText = '';
+    let customFieldsData: any = null;
     if (locationId) {
       try {
         const cfUrl = primaryBase + `/locations/${locationId}/customFields?model=contact&limit=200`;
         console.log('Testing GET', cfUrl);
-        const cfRes = await fetch(cfUrl, { method: 'GET', headers: baseHeaders });
-        const cfText = await cfRes.text();
-        console.log('Custom fields status:', cfRes.status);
-        console.log('Custom fields body (first 300 chars):', cfText.substring(0, 300));
+        customFieldsRes = await fetch(cfUrl, { method: 'GET', headers: baseHeaders });
+        customFieldsText = await customFieldsRes.text();
+        console.log('Custom fields status:', customFieldsRes.status);
+        console.log('Custom fields body (first 300 chars):', customFieldsText.substring(0, 300));
+        
+        if (customFieldsRes.ok) {
+          try {
+            customFieldsData = JSON.parse(customFieldsText);
+            const fields = customFieldsData.customFields || [];
+            console.log(`Found ${fields.length} custom fields`);
+            if (fields.length > 0) {
+              console.log('Custom field details:');
+              fields.slice(0, 5).forEach((f: any) => {
+                console.log(`  - ID: ${f.id}, Name: "${f.name}", Key: "${f.fieldKey || 'N/A'}"`);
+              });
+            }
+          } catch (e) {
+            console.error('Failed to parse custom fields JSON:', e);
+          }
+        }
       } catch (e) {
         console.error('Custom fields fetch error:', e);
       }
@@ -125,17 +144,26 @@ serve(async (req: Request) => {
     let diagnosis = 'OK';
     let recommendedEndpoint = primaryBase + '/contacts';
 
+    // Build comprehensive diagnosis
+    const customFieldsCount = customFieldsData?.customFields?.length || 0;
+    
     // Check for obvious Location ID format issues
     if (locationId && locationId.startsWith('pit')) {
       diagnosis = 'CRITICAL: Location ID appears to be a PIT token, not a Location ID. Please set GHL_LOCATION_ID to your actual Sub-Account (Location) ID.';
     } else if (contactsNoV1Res.ok) {
-      diagnosis = 'Contacts endpoint works WITHOUT /v1 (use services.leadconnectorhq.com/contacts)';
-      recommendedEndpoint = primaryBase + '/contacts';
+      diagnosis = 'Contacts endpoint works WITHOUT /v1 (use services.leadconnectorhq.com/contacts/upsert)';
+      recommendedEndpoint = primaryBase + '/contacts/upsert';
+      
+      if (customFieldsCount === 0 && locationId) {
+        diagnosis += ' | WARNING: 0 custom fields found - create custom fields in GHL for asking_price, timeline, condition, property_listed';
+      } else if (customFieldsCount > 0) {
+        diagnosis += ` | Found ${customFieldsCount} custom fields`;
+      }
     } else if (contactsV1Res.ok) {
-      diagnosis = 'Contacts endpoint only works WITH /v1. For PIT-based tokens, prefer /contacts. Verify your token type and scopes.';
-      recommendedEndpoint = primaryBase + '/contacts';
+      diagnosis = 'Contacts endpoint only works WITH /v1. For PIT-based tokens, prefer /contacts/upsert. Verify your token type and scopes.';
+      recommendedEndpoint = primaryBase + '/contacts/upsert';
     } else if (contactsNoV1Res.status === 401 || contactsV1Res.status === 401) {
-      diagnosis = 'Unauthorized. Verify the API key (PIT pit-...) and required scopes (contacts.write).';
+      diagnosis = 'Unauthorized. Verify the API key is a valid PIT token (starts with "pit-") and has required scopes (contacts.write).';
     } else if ((contactsNoV1Res.status === 403 || contactsV1Res.status === 403) && !locationId) {
       diagnosis = 'Forbidden. Missing Location-Id. Set the GHL_LOCATION_ID secret to your Sub-Account (Location) ID.';
     } else if ((contactsNoV1Res.status === 403 || contactsV1Res.status === 403) && locationId) {
@@ -159,9 +187,16 @@ serve(async (req: Request) => {
       apiKey_present: !!apiKey,
       apiKey_prefix: apiKey?.slice(0, 3),
       apiKey_length: apiKey?.length,
+      apiKey_is_pit: apiKey?.startsWith('pit-') || false,
       location_id_present: !!locationId,
       location_id_first8: locationId?.slice(0, 8),
       location_id_looks_like_pit: locationId?.startsWith('pit') || false,
+      custom_fields_count: customFieldsCount,
+      custom_fields: customFieldsData?.customFields?.slice(0, 10).map((f: any) => ({
+        id: f.id,
+        name: f.name,
+        fieldKey: f.fieldKey,
+      })) || [],
       tests: {
         contacts_no_v1: {
           url: primaryBase + '/contacts/?limit=1',
@@ -194,7 +229,19 @@ serve(async (req: Request) => {
           status: usersMeRes.status,
           ok: usersMeRes.ok,
           body: (() => { try { return JSON.parse(usersMeText); } catch { return usersMeText.substring(0, 300); } })()
-        }
+        },
+        custom_fields: customFieldsRes ? {
+          url: primaryBase + `/locations/${locationId}/customFields?model=contact`,
+          status: customFieldsRes.status,
+          ok: customFieldsRes.ok,
+          count: customFieldsCount,
+          fields: customFieldsData?.customFields?.slice(0, 5).map((f: any) => ({
+            id: f.id,
+            name: f.name,
+            fieldKey: f.fieldKey,
+          })) || [],
+          body: (() => { try { return JSON.parse(customFieldsText); } catch { return customFieldsText.substring(0, 300); } })()
+        } : null
       },
     }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
   } catch (error) {

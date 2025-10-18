@@ -202,30 +202,46 @@ async function sendToZapier(webhookUrl: string, leadPayload: any, supabase: any,
 }
 
 async function sendToGoHighLevel(apiKey: string, locationId: string | undefined, leadPayload: any, supabase: any, leadId: string) {
-  const apiUrl = 'https://services.leadconnectorhq.com/contacts/';
+  // Use /contacts/upsert per GHL v2 best practices (respects duplicate settings)
+  const apiUrl = 'https://services.leadconnectorhq.com/contacts/upsert';
 
   try {
-    console.log('Starting GHL v2 API call for lead:', leadId);
+    console.log('Starting GHL v2 API call (upsert) for lead:', leadId);
 
-    // Include required locationId per GHL docs
-    const effectiveLocationId = locationId || 'unxTj89xWq1FbRdTt2rH';
+    // Validate configuration
+    if (!locationId) {
+      const errorMsg = 'GHL_LOCATION_ID is required for API v2';
+      console.error(errorMsg);
+      await updateLeadGhlStatus(supabase, leadId, false, errorMsg);
+      return;
+    }
 
-    // Fetch contact custom field IDs so we can map values correctly
-    const customFieldsUrl = `https://services.leadconnectorhq.com/locations/${effectiveLocationId}/customFields?model=contact&limit=200`;
-    let cfHeaders: Record<string, string> = {
-      'Authorization': apiKey,
-      'Accept': 'application/json',
+    if (locationId.startsWith('pit-')) {
+      const errorMsg = 'GHL_LOCATION_ID appears to be a PIT token (starts with "pit-"). It should be your Sub-Account Location ID (e.g., "GbOoP9eUwGI1Eb30Baex")';
+      console.error(errorMsg);
+      await updateLeadGhlStatus(supabase, leadId, false, errorMsg);
+      return;
+    }
+
+    // Fetch contact custom field IDs using Bearer auth (API v2 standard)
+    const customFieldsUrl = `https://services.leadconnectorhq.com/locations/${locationId}/customFields?model=contact&limit=200`;
+    const cfHeaders: Record<string, string> = {
+      'Authorization': `Bearer ${apiKey}`,
       'Version': '2021-07-28',
-      'Location-Id': effectiveLocationId,
+      'Accept': 'application/json',
     };
-    console.log('Fetching GHL custom fields for location:', effectiveLocationId);
-    let cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });
-    let cfText = await cfResp.text();
-    if (cfResp.status === 401 || cfResp.status === 403) {
-      console.log('Custom fields fetch: retrying with Bearer prefix');
-      cfHeaders['Authorization'] = `Bearer ${apiKey}`;
-      cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });
-      cfText = await cfResp.text();
+    
+    console.log('Fetching GHL custom fields for location:', locationId);
+    const cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });
+    const cfText = await cfResp.text();
+    
+    if (!cfResp.ok) {
+      console.error(`Custom fields fetch failed: ${cfResp.status} ${cfText.substring(0, 200)}`);
+      if (cfResp.status === 401) {
+        console.error('⚠️  401 Unauthorized: Check that GHL_API_KEY is a valid PIT token starting with "pit-"');
+      } else if (cfResp.status === 403) {
+        console.error('⚠️  403 Forbidden: Verify that the PIT token has access to this location and has contacts.write scope');
+      }
     }
 
     const desiredKeysToValues: Record<string, string> = {
@@ -247,7 +263,20 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
     try {
       const cfData = JSON.parse(cfText);
       const available = Array.isArray(cfData.customFields) ? cfData.customFields : [];
-      console.log(`Found ${available.length} custom fields in GHL location`);
+      console.log(`✅ Found ${available.length} custom fields in GHL location`);
+      
+      // Log each custom field for debugging
+      if (available.length > 0) {
+        console.log('Available custom fields:');
+        for (const f of available.slice(0, 10)) { // Log first 10
+          console.log(`  - ID: ${f.id}, Name: "${f.name}", Key: "${f.fieldKey || 'N/A'}"`);
+        }
+        if (available.length > 10) {
+          console.log(`  ... and ${available.length - 10} more`);
+        }
+      } else {
+        console.warn('⚠️  No custom fields found. Create custom fields in GHL for asking_price, timeline, condition, property_listed');
+      }
       
       const idByKey: Record<string, string> = {};
       const idByName: Record<string, string> = {};
@@ -301,68 +330,63 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
       email: leadPayload.contact.email,
       phone: leadPayload.contact.phone,
       address1: leadPayload.property.address,
-      locationId: effectiveLocationId,
+      locationId: locationId,
       tags: ['ppc'],
       source: leadPayload.source || 'website_form',
     };
 
     if (customFieldsPayload.length > 0) {
       ghlPayload.customFields = customFieldsPayload;
+      console.log(`✅ Sending ${customFieldsPayload.length} custom fields to GHL`);
+    } else {
+      console.warn('⚠️  No custom fields will be sent (none matched or none exist in GHL)');
     }
 
-    // Attempt 1: Raw PIT token (v2 standard)
-    let headers: Record<string, string> = {
-      'Authorization': apiKey,
+    // Use Bearer authorization per GHL v2 API documentation
+    const headers: Record<string, string> = {
+      'Authorization': `Bearer ${apiKey}`,
       'Content-Type': 'application/json',
       'Accept': 'application/json',
       'Version': '2021-07-28',
     };
 
-    console.log('Attempt 1: Raw PIT Authorization');
-    let response = await fetch(apiUrl, {
+    console.log(`Calling ${apiUrl} with locationId: ${locationId}`);
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers,
       body: JSON.stringify(ghlPayload),
     });
 
-    let responseText = await response.text();
-    console.log('Response Status:', response.status);
+    const responseText = await response.text();
+    console.log('GHL Response Status:', response.status);
 
-    // Attempt 2: Fallback to Bearer prefix if 401/403
-    if (response.status === 401 || response.status === 403) {
-      console.log('Attempt 2: Trying with Bearer prefix');
-      headers['Authorization'] = `Bearer ${apiKey}`;
-      
-      response = await fetch(apiUrl, {
-        method: 'POST',
-        headers,
-        body: JSON.stringify(ghlPayload),
-      });
-
-      responseText = await response.text();
-      console.log('Response Status:', response.status);
-    }
-
-    // Attempt 3 removed: docs require locationId in body, not header
-
-    // Process final result
+    // Process result
     if (response.ok) {
       let contactId = 'unknown';
       try {
         const responseData = JSON.parse(responseText);
         contactId = responseData.contact?.id || responseData.id || 'unknown';
-        console.log('SUCCESS - Contact ID:', contactId);
+        console.log('✅ SUCCESS - Contact upserted with ID:', contactId);
       } catch (_) {
-        console.log('SUCCESS - Response not JSON');
+        console.log('✅ SUCCESS - Response not JSON');
       }
 
-      await updateLeadGhlStatus(supabase, leadId, true, `Contact ID: ${contactId}`);
+      await updateLeadGhlStatus(supabase, leadId, true, `Contact upserted: ${contactId}`);
       return;
     }
 
-    // All attempts failed
-    const errorDetails = `Status ${response.status}: ${responseText.substring(0, 500)}`;
-    console.error('FAILED after all attempts:', errorDetails);
+    // Failed - provide actionable error messages
+    let errorDetails = `Status ${response.status}: ${responseText.substring(0, 500)}`;
+    
+    if (response.status === 401) {
+      errorDetails = `401 Unauthorized - Check that GHL_API_KEY is a valid PIT token starting with "pit-". ${responseText.substring(0, 200)}`;
+    } else if (response.status === 403) {
+      errorDetails = `403 Forbidden - Verify: 1) PIT has contacts.write scope, 2) PIT has access to location ${locationId}. ${responseText.substring(0, 200)}`;
+    } else if (response.status === 422) {
+      errorDetails = `422 Validation Error - Check payload format. ${responseText.substring(0, 300)}`;
+    }
+    
+    console.error('❌ FAILED:', errorDetails);
     await updateLeadGhlStatus(supabase, leadId, false, errorDetails);
 
   } catch (error) {
