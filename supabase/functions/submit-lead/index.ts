@@ -211,11 +211,12 @@ async function sendToGoHighLevel(apiKey: string, locationId: string | undefined,
     const effectiveLocationId = locationId || 'unxTj89xWq1FbRdTt2rH';
 
     // Fetch contact custom field IDs so we can map values correctly
-    const customFieldsUrl = `https://services.leadconnectorhq.com/locations/${effectiveLocationId}/customFields?model=contact`;
+    const customFieldsUrl = `https://services.leadconnectorhq.com/locations/${effectiveLocationId}/customFields?model=contact&limit=200`;
     let cfHeaders: Record<string, string> = {
       'Authorization': apiKey,
       'Accept': 'application/json',
       'Version': '2021-07-28',
+      'Location-Id': effectiveLocationId,
     };
     console.log('Fetching GHL custom fields for location:', effectiveLocationId);
     let cfResp = await fetch(customFieldsUrl, { headers: cfHeaders });

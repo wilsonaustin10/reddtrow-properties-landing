@@ -107,6 +107,20 @@ serve(async (req: Request) => {
     console.log('Users/me status:', usersMeRes.status);
     console.log('Users/me body (first 300 chars):', usersMeText.substring(0, 300));
 
+    // Test custom fields for the provided location (optional but useful)
+    if (locationId) {
+      try {
+        const cfUrl = primaryBase + `/locations/${locationId}/customFields?model=contact&limit=200`;
+        console.log('Testing GET', cfUrl);
+        const cfRes = await fetch(cfUrl, { method: 'GET', headers: baseHeaders });
+        const cfText = await cfRes.text();
+        console.log('Custom fields status:', cfRes.status);
+        console.log('Custom fields body (first 300 chars):', cfText.substring(0, 300));
+      } catch (e) {
+        console.error('Custom fields fetch error:', e);
+      }
+    }
+
     // Build enhanced diagnosis
     let diagnosis = 'OK';
     let recommendedEndpoint = primaryBase + '/contacts';
