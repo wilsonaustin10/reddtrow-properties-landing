@@ -290,10 +290,10 @@ const Hero = () => {
   };
 
   return (
-    <section id="lead-form" className="hero-section relative min-h-[40vh] flex items-center py-4 md:py-8 text-white" style={{ willChange: 'auto' }}>
+    <section id="lead-form" className="hero-section relative min-h-[40vh] flex items-center py-4 md:py-8 text-white">
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-6 lg:gap-12 items-center">
-          <div className="space-y-3 lg:space-y-6 order-1 lg:order-1" style={{ contain: 'layout' }}>
+          <div className="space-y-3 lg:space-y-6 order-1 lg:order-1">
             <div className="space-y-2">
               <div className="flex items-center space-x-2 mb-2 lg:mb-4">
                 <div className="success-badge px-3 lg:px-6 py-1 lg:py-3 rounded-full text-sm lg:text-xl font-bold shadow-lg">
@@ -306,7 +306,7 @@ const Hero = () => {
                 <span className="block text-white">Fast for Cash</span>
               </h1>
               
-              <p className="text-base md:text-xl lg:text-2xl text-white/90 leading-relaxed" style={{ contain: 'layout style' }}>
+              <p className="text-base md:text-xl lg:text-2xl text-white/90 leading-relaxed">
                 Get a fair cash offer in 7 minutes or less. No repairs, no fees, no hassles. 
                 Close in as little as 7 days on your timeline.
               </p>
