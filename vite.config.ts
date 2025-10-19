@@ -19,9 +19,8 @@ export default defineConfig(({ mode }) => ({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          // Vendor chunks - React ecosystem
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
               return 'vendor-react';
             }
             if (id.includes('@radix-ui')) {
@@ -30,32 +29,9 @@ export default defineConfig(({ mode }) => ({
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
             }
-            if (id.includes('embla-carousel')) {
-              return 'vendor-carousel';
-            }
             if (id.includes('@tanstack/react-query')) {
               return 'vendor-query';
             }
-            return 'vendor-misc';
-          }
-          
-          // Lazy-loaded components
-          if (id.includes('/components/Benefits')) {
-            return 'benefits';
-          }
-          if (id.includes('/components/HowItWorks')) {
-            return 'how-it-works';
-          }
-          if (id.includes('/components/Testimonials')) {
-            return 'testimonials';
-          }
-          if (id.includes('/components/Footer')) {
-            return 'footer';
-          }
-          
-          // Google Maps - load on demand
-          if (id.includes('GooglePlacesService') || id.includes('AddressAutocomplete')) {
-            return 'google-maps';
           }
         }
       }
