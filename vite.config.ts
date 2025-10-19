@@ -18,26 +18,64 @@ export default defineConfig(({ mode }) => ({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'google-maps': ['@/utils/GooglePlacesService'],
-          'ui': [
-            '@/components/ui/button',
-            '@/components/ui/input',
-            '@/components/ui/card',
-            '@/components/ui/label',
-            '@/components/ui/radio-group',
-            '@/components/ui/select'
-          ]
+        manualChunks: (id) => {
+          // Vendor chunks - React ecosystem
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom')) {
+              return 'vendor-react';
+            }
+            if (id.includes('@radix-ui')) {
+              return 'vendor-radix';
+            }
+            if (id.includes('lucide-react')) {
+              return 'vendor-icons';
+            }
+            if (id.includes('embla-carousel')) {
+              return 'vendor-carousel';
+            }
+            if (id.includes('@tanstack/react-query')) {
+              return 'vendor-query';
+            }
+            return 'vendor-misc';
+          }
+          
+          // Lazy-loaded components
+          if (id.includes('/components/Benefits')) {
+            return 'benefits';
+          }
+          if (id.includes('/components/HowItWorks')) {
+            return 'how-it-works';
+          }
+          if (id.includes('/components/Testimonials')) {
+            return 'testimonials';
+          }
+          if (id.includes('/components/Footer')) {
+            return 'footer';
+          }
+          
+          // Google Maps - load on demand
+          if (id.includes('GooglePlacesService') || id.includes('AddressAutocomplete')) {
+            return 'google-maps';
+          }
         }
       }
     },
     target: 'es2020',
     minify: mode === 'production' ? 'terser' : 'esbuild',
+    cssCodeSplit: true,
     ...(mode === 'production' && {
       terserOptions: {
         compress: {
           drop_console: true,
-          drop_debugger: true
+          drop_debugger: true,
+          passes: 2,
+          pure_funcs: ['console.log', 'console.info', 'console.debug']
+        },
+        mangle: {
+          safari10: true
+        },
+        format: {
+          comments: false
         }
       }
     })
