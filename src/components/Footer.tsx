@@ -23,7 +23,7 @@ const Footer = () => {
               <div className="flex items-center space-x-3">
                 <Phone className="w-5 h-5 text-urgency" />
                 <div>
-                  <div className="font-semibold">214-306-9740</div>
+                  <div className="font-semibold">210-972-0134</div>
                   <div className="text-sm text-primary-foreground/80">Call or Text Anytime</div>
                 </div>
               </div>
@@ -69,8 +69,8 @@ const Footer = () => {
                 Get My Cash Offer
               </Button>
               
-              <Button variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" onClick={() => window.open('tel:+12143069740')}>
-                Call 214-306-9740
+              <Button variant="outline" className="w-full bg-white/10 border-white/30 text-white hover:bg-white/20" onClick={() => window.open('tel:+12109720134')}>
+                Call 210-972-0134
               </Button>
             </div>
             

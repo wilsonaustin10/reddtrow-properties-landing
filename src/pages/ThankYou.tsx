@@ -43,7 +43,7 @@ const ThankYou = () => {
               <div className="bg-primary/10 rounded-lg p-6 space-y-4">
                 <div className="flex items-center justify-center space-x-2 text-primary">
                   <Phone className="w-6 h-6" />
-                  <span className="text-2xl font-bold">214-306-9740</span>
+                  <span className="text-2xl font-bold">210-972-0134</span>
                 </div>
                 <div className="flex items-center justify-center space-x-2 text-muted-foreground">
                   <Clock className="w-5 h-5" />
@@ -62,7 +62,7 @@ const ThankYou = () => {
                     <Link to="/">Return to Homepage</Link>
                   </Button>
                   <Button asChild>
-                    <a href="tel:+12143069740">Call Us Now</a>
+                    <a href="tel:+12109720134">Call Us Now</a>
                   </Button>
                 </div>
               </div>
