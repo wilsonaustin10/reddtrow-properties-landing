@@ -297,7 +297,7 @@ const Hero = () => {
             <div className="space-y-2">
               <div className="flex items-center space-x-2 mb-2 lg:mb-4">
                 <div className="success-badge px-3 lg:px-6 py-1 lg:py-3 rounded-full text-sm lg:text-xl font-bold shadow-lg">
-                  #1 Local Home Buyers
+                  #1 Nationwide Home Buyers
                 </div>
               </div>
               
