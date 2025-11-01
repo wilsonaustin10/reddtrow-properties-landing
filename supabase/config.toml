@@ -1,1 +1,4 @@
 project_id = "qsyrvarehttlgqvvmgft"
+
+[functions.ghl-diagnose]
+verify_jwt = true

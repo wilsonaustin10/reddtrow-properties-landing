@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { getEdgeFunctionConfig, logConfigStatus } from '../_shared/config.ts';
+import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -29,6 +30,20 @@ async function updateLeadGhlStatus(supabase: any, leadId: string, success: boole
     })
     .eq('id', leadId);
 }
+
+// Input validation schema for security
+const leadSchema = z.object({
+  firstName: z.string().trim().min(1, "First name is required").max(100, "First name too long"),
+  lastName: z.string().trim().min(1, "Last name is required").max(100, "Last name too long"),
+  email: z.string().email("Invalid email format").max(255, "Email too long"),
+  phone: z.string().trim().min(10, "Phone number too short").max(20, "Phone number too long"),
+  address: z.string().trim().min(5, "Address too short").max(500, "Address too long"),
+  isListed: z.enum(['yes', 'no']).optional(),
+  condition: z.enum(['poor', 'fair', 'good', 'excellent']).optional(),
+  timeline: z.enum(['asap', '30days', '60days', '90days', '90plus']).optional(),
+  askingPrice: z.string().trim().max(50, "Asking price too long").optional(),
+  smsConsent: z.boolean().optional()
+});
 
 interface LeadData {
   address: string;
@@ -63,19 +78,31 @@ const handler = async (req: Request): Promise<Response> => {
     const config = getEdgeFunctionConfig();
     logConfigStatus();
     
-    const leadData: LeadData = await req.json();
-    console.log('Received lead data:', { ...leadData, phone: '***', email: '***' });
+    const rawData = await req.json();
+    
+    // Validate input data with Zod schema
+    let leadData: LeadData;
+    try {
+      leadData = leadSchema.parse(rawData) as LeadData;
+      console.log('Lead data validated successfully');
+    } catch (validationError) {
+      console.error("Validation error:", validationError);
+      if (validationError instanceof z.ZodError) {
+        return new Response(
+          JSON.stringify({ 
+            error: "Invalid input data", 
+            details: validationError.errors.map(e => `${e.path.join('.')}: ${e.message}`)
+          }),
+          { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      throw validationError;
+    }
+    
+    console.log('Received validated lead data:', { ...leadData, phone: '***', email: '***' });
     
     // Initialize Supabase client with service role key for database operations
     const supabase = createClient(config.supabase.url, config.supabase.serviceRoleKey);
-    
-    // Validate required fields
-    if (!leadData.address || !leadData.phone || !leadData.firstName || !leadData.lastName || !leadData.email) {
-      return new Response(JSON.stringify({ error: 'Missing required fields' }), {
-        status: 400,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
-    }
 
     // Store lead in database
     console.log('Storing lead in database...');

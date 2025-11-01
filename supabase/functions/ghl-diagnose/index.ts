@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -12,18 +13,44 @@ serve(async (req: Request) => {
   }
 
   try {
+    // Verify authentication - diagnostic tool requires authentication
+    const authHeader = req.headers.get('authorization');
+    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+      console.warn("Unauthorized access attempt to ghl-diagnose");
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Authentication required' }), 
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Verify the JWT token
+    const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
+    const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY')!;
+    const supabase = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } }
+    });
+
+    const { data: { user }, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
+      console.warn("Invalid authentication token");
+      return new Response(
+        JSON.stringify({ error: 'Unauthorized - Invalid token' }), 
+        { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    console.log(`Authenticated user ${user.id} accessing diagnostic`);
+
     const apiKey = Deno.env.get('GHL_API_KEY')?.trim();
     const locationId = Deno.env.get('GHL_LOCATION_ID')?.trim();
 
     console.log('=== GHL DIAGNOSE - SECRET VALUES CHECK ===');
     console.log('- API Key present:', apiKey ? 'YES' : 'NO');
-    console.log('- API Key FULL VALUE (for debugging):', apiKey ? `"${apiKey}"` : 'N/A');
-    console.log('- API Key prefix:', apiKey ? apiKey.slice(0, 15) + '...' : 'N/A');
+    console.log('- API Key prefix:', apiKey ? apiKey.slice(0, 4) + '***' : 'N/A');
     console.log('- API Key type:', apiKey && apiKey.startsWith('pit') ? 'Private Integration Token' : 'Other/Unknown');
     console.log('- API Key length:', apiKey ? apiKey.length : 0);
     console.log('- Location ID present:', locationId ? 'YES' : 'NO');
-    console.log('- Location ID FULL VALUE (for debugging):', locationId ? `"${locationId}"` : 'N/A');
-    console.log('- Location ID value:', locationId ? locationId.slice(0, 8) + '...' : 'N/A');
+    console.log('- Location ID prefix:', locationId ? locationId.slice(0, 8) + '***' : 'N/A');
     console.log('- Location ID header will be included:', locationId ? 'YES' : 'NO');
     if (locationId && locationId.startsWith('pit')) {
       console.log('⚠️  WARNING: Location ID looks like a PIT token, not a Location ID');
