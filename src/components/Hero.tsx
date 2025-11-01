@@ -140,9 +140,10 @@ const Hero = () => {
               value={formData.address}
               onChange={(address) => handleInputChange('address', address)}
               onAddressSelect={(isValid) => setIsAddressSelected(isValid)}
-              placeholder="123 Main St, City, State, ZIP"
+              placeholder="Start typing your address..."
               required
               className="h-12"
+              isAddressSelected={isAddressSelected}
             />
             <div className="space-y-2">
               <Label htmlFor="phone" className="flex items-center space-x-1 text-foreground">

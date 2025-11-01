@@ -1,7 +1,7 @@
 import { useRef, useState, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MapPin, Loader2 } from 'lucide-react';
+import { MapPin, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 interface AddressAutocompleteProps {
@@ -11,6 +11,7 @@ interface AddressAutocompleteProps {
   placeholder?: string;
   required?: boolean;
   className?: string;
+  isAddressSelected?: boolean;
 }
 
 const AddressAutocomplete = ({ 
@@ -19,7 +20,8 @@ const AddressAutocomplete = ({
   onAddressSelect,
   placeholder = "123 Main St, City, State, ZIP",
   required = false,
-  className = "h-12"
+  className = "h-12",
+  isAddressSelected = false
 }: AddressAutocompleteProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
@@ -103,14 +105,34 @@ const AddressAutocomplete = ({
           onChange={handleInputChange}
           onFocus={handleInputFocus}
           required={required}
-          className={className}
+          className={`${className} ${value && !isAddressSelected ? 'border-destructive' : ''} ${isAddressSelected ? 'border-green-500' : ''}`}
         />
         {isLoading && (
           <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
             <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
           </div>
         )}
+        {!isLoading && value && isAddressSelected && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+            <CheckCircle2 className="w-4 h-4 text-green-500" />
+          </div>
+        )}
+        {!isLoading && value && !isAddressSelected && (
+          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
+            <AlertCircle className="w-4 h-4 text-destructive" />
+          </div>
+        )}
       </div>
+      {value && !isAddressSelected && (
+        <p className="text-xs text-destructive mt-1">
+          Please select a complete address from the dropdown suggestions
+        </p>
+      )}
+      {isAddressSelected && (
+        <p className="text-xs text-green-600 mt-1">
+          ✓ Valid address selected
+        </p>
+      )}
     </div>
   );
 };
