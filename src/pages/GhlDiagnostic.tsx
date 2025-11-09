@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeSupabaseFunction } from "@/integrations/supabase/functions";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2 } from "lucide-react";
@@ -15,7 +15,7 @@ const GhlDiagnostic = () => {
     setResults(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke("ghl-diagnose", {
+      const { data, error } = await invokeSupabaseFunction("ghl-diagnose", {
         body: {},
       });
 

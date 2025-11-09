@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
 import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { CheckCircle2, Clock, DollarSign, MapPin, Phone, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { invokeSupabaseFunction } from "@/integrations/supabase/functions";
 
 const Hero = () => {
   const [currentStep, setCurrentStep] = useState(1);
@@ -51,7 +51,7 @@ const Hero = () => {
         description: "Please wait while we process your request.",
       });
 
-      const { data, error } = await supabase.functions.invoke('submit-lead', {
+      const { data, error } = await invokeSupabaseFunction('submit-lead', {
         body: {
           address: formData.address,
           phone: formData.phone,
