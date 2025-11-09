@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -10,10 +10,48 @@ import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { CheckCircle2, Clock, DollarSign, MapPin, Phone, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+const trackingFieldNames = [
+  'gclid',
+  'wbraid',
+  'gbraid',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_campaignid',
+  'utm_adgroupid',
+  'utm_term',
+  'utm_device',
+  'utm_creative',
+  'utm_network',
+  'utm_assetgroup',
+  'utm_headline',
+  'landing_page',
+  'referrer',
+  'session_id'
+] as const;
+
+type TrackingFieldName = typeof trackingFieldNames[number];
+
+type TrackingFields = Record<TrackingFieldName, string>;
+
+interface LeadFormData extends TrackingFields {
+  address: string;
+  phone: string;
+  smsConsent: boolean;
+  isListed: string;
+  condition: string;
+  timeline: string;
+  askingPrice: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  website: string;
+}
+
 const Hero = () => {
   const [currentStep, setCurrentStep] = useState(1);
   const [isAddressSelected, setIsAddressSelected] = useState(false);
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<LeadFormData>({
     address: '',
     phone: '',
     smsConsent: false,
@@ -24,7 +62,24 @@ const Hero = () => {
     firstName: '',
     lastName: '',
     email: '',
-    website: '' // Honeypot field
+    website: '', // Honeypot field
+    gclid: '',
+    wbraid: '',
+    gbraid: '',
+    utm_source: '',
+    utm_medium: '',
+    utm_campaign: '',
+    utm_campaignid: '',
+    utm_adgroupid: '',
+    utm_term: '',
+    utm_device: '',
+    utm_creative: '',
+    utm_network: '',
+    utm_assetgroup: '',
+    utm_headline: '',
+    landing_page: '',
+    referrer: '',
+    session_id: '',
   });
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -42,6 +97,63 @@ const Hero = () => {
       setCurrentStep(currentStep - 1);
     }
   };
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+
+    const searchParams = new URLSearchParams(window.location.search);
+    const updates: Partial<TrackingFields> = {};
+    let storage: Storage | null = null;
+
+    try {
+      storage = window.sessionStorage;
+    } catch (error) {
+      console.warn('Session storage is unavailable:', error);
+    }
+
+    const generateFallbackSessionId = () => `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+
+    trackingFieldNames.forEach((key) => {
+      let value = '';
+
+      if (key === 'landing_page') {
+        value = window.location.href;
+      } else if (key === 'referrer') {
+        value = document.referrer || '';
+      } else if (key === 'session_id') {
+        const storedSessionId = storage?.getItem(key) || '';
+        value = storedSessionId
+          || (typeof window.crypto !== 'undefined' && typeof window.crypto.randomUUID === 'function'
+            ? window.crypto.randomUUID()
+            : generateFallbackSessionId());
+      } else {
+        const paramValue = searchParams.get(key) || '';
+        const storedValue = storage?.getItem(key) || '';
+        value = paramValue || storedValue;
+      }
+
+      if (!value) {
+        value = storage?.getItem(key) || '';
+      }
+
+      if (value && storage) {
+        try {
+          storage.setItem(key, value);
+        } catch (error) {
+          console.warn('Unable to persist tracking data to session storage:', error);
+        }
+      }
+
+      updates[key] = value;
+    });
+
+    setFormData((prev) => ({
+      ...prev,
+      ...updates,
+    }));
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,6 +177,9 @@ const Hero = () => {
           lastName: formData.lastName,
           email: formData.email,
           website: formData.website, // Honeypot field
+          ...Object.fromEntries(
+            trackingFieldNames.map((key) => [key, formData[key]])
+          ),
         }
       });
 
@@ -88,11 +203,11 @@ const Hero = () => {
     }
   };
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData({
-      ...formData,
-      [field]: value
-    });
+  const handleInputChange = <K extends keyof LeadFormData>(field: K, value: LeadFormData[K]) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: value,
+    }));
   };
 
   const isStepValid = () => {
@@ -388,7 +503,17 @@ const Hero = () => {
                   <div className="min-h-[400px]">
                     {renderStep()}
                   </div>
-                  
+
+                  {trackingFieldNames.map((key) => (
+                    <input
+                      key={key}
+                      type="hidden"
+                      name={key}
+                      value={formData[key]}
+                      readOnly
+                    />
+                  ))}
+
                   <div className="flex space-x-3 pt-6 border-t border-border">
                     {currentStep > 1 && (
                       <Button
