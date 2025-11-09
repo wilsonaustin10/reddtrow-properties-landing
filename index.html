@@ -84,16 +84,31 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Deferred Google Tag Manager - loads after critical content -->
+    <!-- Hybrid GTM Loading - loads on interaction or 2s fallback -->
     <script>
-      // Defer GTM loading until after page is interactive
-      setTimeout(function() {
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-MGDBJPQQ');
-      }, 3000);
+      (function() {
+        var gtmLoaded = false;
+        
+        function loadGTM() {
+          if (gtmLoaded) return;
+          gtmLoaded = true;
+          
+          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+          })(window,document,'script','dataLayer','GTM-MGDBJPQQ');
+        }
+        
+        // Load on user interaction
+        var events = ['scroll', 'click', 'touchstart', 'mousemove', 'keydown'];
+        events.forEach(function(event) {
+          window.addEventListener(event, loadGTM, { once: true, passive: true });
+        });
+        
+        // Fallback: load after 2 seconds regardless
+        setTimeout(loadGTM, 2000);
+      })();
     </script>
     
     <!-- GTM noscript fallback -->
