@@ -76,7 +76,138 @@
         contain: layout style;
       }
     </style>
-    
+
+    <script type="module">
+      function runAttributionScript() {
+        (function () {
+          try {
+            var params = new URLSearchParams(window.location.search);
+            var now = new Date().toISOString();
+            var lp = location.href.split('#')[0];
+            var ref = document.referrer || '(direct)';
+
+            function get(k) {
+              return (params.get(k) || '').trim();
+            }
+
+            var click = {
+              gclid: get('gclid'),
+              wbraid: get('wbraid'),
+              gbraid: get('gbraid'),
+              utm_source: get('utm_source') || 'google',
+              utm_medium: get('utm_medium') || 'cpc',
+              utm_campaign: get('utm_campaign'),
+              utm_campaignid: get('utm_campaignid'),
+              utm_adgroupid: get('utm_adgroupid'),
+              utm_term: get('utm_term'),
+              utm_device: get('utm_device'),
+              utm_creative: get('utm_creative'),
+              utm_network: get('utm_network'),
+              utm_assetgroup: get('utm_assetgroup'),
+              utm_headline: get('utm_headline'),
+              landing_page: lp,
+              referrer: ref,
+              ts: now,
+            };
+
+            function setCookie(name, val, days) {
+              var maxAge = days ? days * 24 * 60 * 60 : 60 * 60 * 24 * 90; // default 90d
+              document.cookie =
+                name +
+                '=' +
+                encodeURIComponent(JSON.stringify(val)) +
+                '; Max-Age=' +
+                maxAge +
+                '; Path=/; SameSite=Lax';
+            }
+            function getCookie(name) {
+              var m = document.cookie.match(
+                '(?:^|; )' +
+                  name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') +
+                  '=([^;]*)'
+              );
+              return m ? JSON.parse(decodeURIComponent(m[1])) : null;
+            }
+            function uuid() {
+              return crypto && crypto.randomUUID
+                ? crypto.randomUUID()
+                : Date.now() + '-' + Math.random().toString(16).slice(2);
+            }
+
+            var hasClickSignal = Object.keys(click).some(function (k) {
+              return !!click[k];
+            });
+            var ft = getCookie('_aa_ft') || (hasClickSignal ? click : null);
+            var lt = hasClickSignal ? click : getCookie('_aa_lt') || null;
+
+            if (ft) setCookie('_aa_ft', ft);
+            if (lt) setCookie('_aa_lt', lt);
+
+            function applyToForm(form) {
+              var data = Object.assign({}, ft || {}, lt || {});
+              data.session_id = data.session_id || uuid();
+
+              var fields = [
+                'gclid',
+                'wbraid',
+                'gbraid',
+                'utm_source',
+                'utm_medium',
+                'utm_campaign',
+                'utm_campaignid',
+                'utm_adgroupid',
+                'utm_term',
+                'utm_device',
+                'utm_creative',
+                'utm_network',
+                'utm_assetgroup',
+                'utm_headline',
+                'landing_page',
+                'referrer',
+                'session_id',
+              ];
+
+              fields.forEach(function (f) {
+                var sel =
+                  '[name="' +
+                  f +
+                  '"],[name="custom_' +
+                  f +
+                  '"],[data-field="' +
+                  f +
+                  '"]';
+                var input = form.querySelector(sel);
+                if (!input) {
+                  input = document.createElement('input');
+                  input.type = 'hidden';
+                  input.name = f;
+                  form.appendChild(input);
+                }
+                input.value = data[f] || '';
+              });
+            }
+
+            function init() {
+              document.querySelectorAll('form').forEach(applyToForm);
+            }
+            init();
+            var ob = new MutationObserver(init);
+            ob.observe(document.documentElement, { subtree: true, childList: true });
+          } catch (e) {
+            console && console.warn('Attribution script error', e);
+          }
+        })();
+      }
+
+      if ('requestIdleCallback' in window) {
+        requestIdleCallback(runAttributionScript);
+      } else if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', runAttributionScript, { once: true });
+      } else {
+        runAttributionScript();
+      }
+    </script>
+
     <title>Sell Your House Fast for Cash - Get Offer in 7 Minutes</title>
   </head>
 
