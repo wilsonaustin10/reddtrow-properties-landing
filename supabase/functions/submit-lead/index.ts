@@ -1,6 +1,7 @@
 import { serve } from "https://deno.land/std@0.190.0/http/server.ts";
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { getEdgeFunctionConfig, logConfigStatus } from '../_shared/config.ts';
+import type { CustomFieldIdConfig } from '../_shared/config.ts';
 import { z } from "https://deno.land/x/zod@v3.22.4/mod.ts";
 
 const corsHeaders = {
@@ -32,6 +33,51 @@ async function updateLeadGhlStatus(supabase: any, leadId: string, success: boole
 }
 
 // Input validation schema for security
+const ATTRIBUTION_FIELD_NAMES = [
+  'gclid',
+  'wbraid',
+  'gbraid',
+  'utm_source',
+  'utm_medium',
+  'utm_campaign',
+  'utm_campaignid',
+  'utm_adgroupid',
+  'utm_term',
+  'utm_device',
+  'utm_creative',
+  'utm_network',
+  'utm_assetgroup',
+  'utm_headline',
+  'landing_page',
+  'referrer',
+  'session_id'
+] as const;
+
+type AttributionFieldName = typeof ATTRIBUTION_FIELD_NAMES[number];
+type AttributionData = Partial<Record<AttributionFieldName, string>>;
+
+const trackingString = (max: number, message: string) => z.string().trim().max(max, message).optional();
+
+const attributionSchema = z.object({
+  gclid: trackingString(255, 'gclid is too long'),
+  wbraid: trackingString(255, 'wbraid is too long'),
+  gbraid: trackingString(255, 'gbraid is too long'),
+  utm_source: trackingString(255, 'utm_source is too long'),
+  utm_medium: trackingString(255, 'utm_medium is too long'),
+  utm_campaign: trackingString(255, 'utm_campaign is too long'),
+  utm_campaignid: trackingString(255, 'utm_campaignid is too long'),
+  utm_adgroupid: trackingString(255, 'utm_adgroupid is too long'),
+  utm_term: trackingString(255, 'utm_term is too long'),
+  utm_device: trackingString(255, 'utm_device is too long'),
+  utm_creative: trackingString(255, 'utm_creative is too long'),
+  utm_network: trackingString(255, 'utm_network is too long'),
+  utm_assetgroup: trackingString(255, 'utm_assetgroup is too long'),
+  utm_headline: trackingString(255, 'utm_headline is too long'),
+  landing_page: trackingString(2048, 'landing_page is too long'),
+  referrer: trackingString(2048, 'referrer is too long'),
+  session_id: trackingString(255, 'session_id is too long')
+});
+
 const leadSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(100, "First name too long"),
   lastName: z.string().trim().min(1, "Last name is required").max(100, "Last name too long"),
@@ -44,16 +90,16 @@ const leadSchema = z.object({
   askingPrice: z.string().trim().max(50, "Asking price too long").optional(),
   smsConsent: z.boolean().optional(),
   website: z.string().optional() // Honeypot field - should be empty
-});
+}).merge(attributionSchema);
 
-interface LeadData {
+interface LeadData extends AttributionData {
   address: string;
   phone: string;
-  smsConsent: boolean;
-  isListed: string;
-  condition: string;
-  timeline: string;
-  askingPrice: string;
+  smsConsent?: boolean;
+  isListed?: string;
+  condition?: string;
+  timeline?: string;
+  askingPrice?: string;
   firstName: string;
   lastName: string;
   email: string;
@@ -117,7 +163,20 @@ const handler = async (req: Request): Promise<Response> => {
 
     console.log('✅ Honeypot check passed (field empty)');
     console.log('Received validated lead data:', { ...leadData, phone: '***', email: '***' });
-    
+
+    const attributionData: AttributionData = {};
+    for (const key of ATTRIBUTION_FIELD_NAMES) {
+      const value = leadData[key];
+      if (typeof value === 'string') {
+        const trimmed = value.trim();
+        if (trimmed !== '') {
+          attributionData[key] = trimmed;
+        }
+      }
+    }
+
+    const storedAttribution = Object.keys(attributionData).length > 0 ? attributionData : null;
+
     // Initialize Supabase client with service role key for database operations
     const supabase = createClient(config.supabase.url, config.supabase.serviceRoleKey);
 
@@ -136,6 +195,7 @@ const handler = async (req: Request): Promise<Response> => {
         first_name: leadData.firstName,
         last_name: leadData.lastName,
         email: leadData.email,
+        attribution: storedAttribution,
       })
       .select()
       .single();
@@ -169,7 +229,8 @@ const handler = async (req: Request): Promise<Response> => {
         phone: leadData.phone,
         sms_consent: leadData.smsConsent
       },
-      source: 'website_form'
+      source: 'website_form',
+      attribution: storedAttribution ?? undefined
     };
 
     // Send to Zapier webhook if configured
@@ -252,12 +313,137 @@ async function sendToZapier(webhookUrl: string, leadPayload: any, supabase: any,
   }
 }
 
-type CustomFieldOverrideConfig = {
-  askingPrice?: string;
-  timeline?: string;
-  propertyListed?: string;
-  condition?: string;
+type CustomFieldOverrideConfig = CustomFieldIdConfig;
+
+type AttributionFieldDefinition = {
+  key: AttributionFieldName;
+  configKey: keyof CustomFieldOverrideConfig;
+  label: string;
+  keys: string[];
+  names: string[];
 };
+
+const ATTRIBUTION_FIELD_DEFINITIONS: AttributionFieldDefinition[] = [
+  {
+    key: 'gclid',
+    configKey: 'gclid',
+    label: 'GCLID',
+    keys: ['contact.gclid'],
+    names: ['GCLID']
+  },
+  {
+    key: 'wbraid',
+    configKey: 'wbraid',
+    label: 'WBRAID',
+    keys: ['contact.wbraid'],
+    names: ['WBRAID']
+  },
+  {
+    key: 'gbraid',
+    configKey: 'gbraid',
+    label: 'GBRAID',
+    keys: ['contact.gbraid'],
+    names: ['GBRAID']
+  },
+  {
+    key: 'utm_source',
+    configKey: 'utmSource',
+    label: 'UTM Source',
+    keys: ['contact.utm_source', 'contact.utmSource'],
+    names: ['UTM Source']
+  },
+  {
+    key: 'utm_medium',
+    configKey: 'utmMedium',
+    label: 'UTM Medium',
+    keys: ['contact.utm_medium', 'contact.utmMedium'],
+    names: ['UTM Medium']
+  },
+  {
+    key: 'utm_campaign',
+    configKey: 'utmCampaign',
+    label: 'UTM Campaign',
+    keys: ['contact.utm_campaign', 'contact.utmCampaign'],
+    names: ['UTM Campaign']
+  },
+  {
+    key: 'utm_campaignid',
+    configKey: 'utmCampaignId',
+    label: 'UTM Campaign ID',
+    keys: ['contact.utm_campaignid', 'contact.utmCampaignId'],
+    names: ['UTM Campaign ID']
+  },
+  {
+    key: 'utm_adgroupid',
+    configKey: 'utmAdgroupId',
+    label: 'UTM Ad Group ID',
+    keys: ['contact.utm_adgroupid', 'contact.utmAdgroupId'],
+    names: ['UTM Ad Group ID']
+  },
+  {
+    key: 'utm_term',
+    configKey: 'utmTerm',
+    label: 'UTM Term',
+    keys: ['contact.utm_term', 'contact.utmTerm'],
+    names: ['UTM Term']
+  },
+  {
+    key: 'utm_device',
+    configKey: 'utmDevice',
+    label: 'UTM Device',
+    keys: ['contact.utm_device', 'contact.utmDevice'],
+    names: ['UTM Device']
+  },
+  {
+    key: 'utm_creative',
+    configKey: 'utmCreative',
+    label: 'UTM Creative',
+    keys: ['contact.utm_creative', 'contact.utmCreative'],
+    names: ['UTM Creative']
+  },
+  {
+    key: 'utm_network',
+    configKey: 'utmNetwork',
+    label: 'UTM Network',
+    keys: ['contact.utm_network', 'contact.utmNetwork'],
+    names: ['UTM Network']
+  },
+  {
+    key: 'utm_assetgroup',
+    configKey: 'utmAssetGroup',
+    label: 'UTM Asset Group',
+    keys: ['contact.utm_assetgroup', 'contact.utmAssetGroup'],
+    names: ['UTM Asset Group']
+  },
+  {
+    key: 'utm_headline',
+    configKey: 'utmHeadline',
+    label: 'UTM Headline',
+    keys: ['contact.utm_headline', 'contact.utmHeadline'],
+    names: ['UTM Headline']
+  },
+  {
+    key: 'landing_page',
+    configKey: 'landingPage',
+    label: 'Landing Page',
+    keys: ['contact.landing_page', 'contact.landingPage'],
+    names: ['Landing Page']
+  },
+  {
+    key: 'referrer',
+    configKey: 'referrer',
+    label: 'Referrer',
+    keys: ['contact.referrer'],
+    names: ['Referrer']
+  },
+  {
+    key: 'session_id',
+    configKey: 'sessionId',
+    label: 'Session ID',
+    keys: ['contact.session_id', 'contact.sessionId'],
+    names: ['Session ID']
+  }
+];
 
 async function sendToGoHighLevel(
   apiKey: string,
@@ -317,11 +503,14 @@ async function sendToGoHighLevel(
 
     // Map lead data to custom field keys with proper type handling
     // Support both snake_case and camelCase variations that GHL auto-generates
-    const customFieldDefinitions: Array<{
+    type FieldDefinition = {
       value: string;
       keys: string[];
       names: string[];
-    }> = [
+      sourceKey?: AttributionFieldName;
+    };
+
+    const customFieldDefinitions: FieldDefinition[] = [
       {
         value: String(leadPayload.property.asking_price ?? ''),
         keys: ['contact.asking_price', 'contact.askingPrice'],
@@ -343,6 +532,32 @@ async function sendToGoHighLevel(
         names: ['Condition']
       }
     ];
+
+    const processedAttributionDefinitions: Array<{ key: AttributionFieldName; value: string }> = [];
+
+    const attributionPayload = (leadPayload.attribution && typeof leadPayload.attribution === 'object')
+      ? leadPayload.attribution as AttributionData
+      : {};
+
+    for (const definition of ATTRIBUTION_FIELD_DEFINITIONS) {
+      const rawValue = attributionPayload[definition.key];
+      if (!rawValue) {
+        continue;
+      }
+
+      const trimmedValue = rawValue.trim();
+      if (!trimmedValue) {
+        continue;
+      }
+
+      customFieldDefinitions.push({
+        value: trimmedValue,
+        keys: definition.keys,
+        names: definition.names,
+        sourceKey: definition.key
+      });
+      processedAttributionDefinitions.push({ key: definition.key, value: trimmedValue });
+    }
 
     const idByKey: Record<string, string> = {};
     const idByName: Record<string, string> = {};
@@ -408,14 +623,45 @@ async function sendToGoHighLevel(
       }
     };
 
-    addOverride('asking_price', customFieldOverrides?.askingPrice, ['contact.asking_price', 'contact.askingPrice'], ['Asking Price']);
-    addOverride('timeline', customFieldOverrides?.timeline, ['contact.timeline', 'contact.propertyTimeline'], ['Timeline']);
-    addOverride('property_listed', customFieldOverrides?.propertyListed, ['contact.property_listed', 'contact.propertyListed'], ['Property Listed']);
-    addOverride('condition', customFieldOverrides?.condition, ['contact.condition', 'contact.propertyCondition'], ['Condition']);
+    const propertyOverrideDefinitions: Array<{ label: string; overrideKey: keyof CustomFieldOverrideConfig; keys: string[]; names: string[] }> = [
+      {
+        label: 'asking_price',
+        overrideKey: 'askingPrice',
+        keys: ['contact.asking_price', 'contact.askingPrice'],
+        names: ['Asking Price']
+      },
+      {
+        label: 'timeline',
+        overrideKey: 'timeline',
+        keys: ['contact.timeline', 'contact.propertyTimeline'],
+        names: ['Timeline']
+      },
+      {
+        label: 'property_listed',
+        overrideKey: 'propertyListed',
+        keys: ['contact.property_listed', 'contact.propertyListed'],
+        names: ['Property Listed']
+      },
+      {
+        label: 'condition',
+        overrideKey: 'condition',
+        keys: ['contact.condition', 'contact.propertyCondition'],
+        names: ['Condition']
+      }
+    ];
 
-    let customFieldsPayload: Array<{ id: string; value: string }> = [];
+    for (const override of propertyOverrideDefinitions) {
+      addOverride(override.label, customFieldOverrides?.[override.overrideKey], override.keys, override.names);
+    }
 
-    for (const { value: val, keys, names } of customFieldDefinitions) {
+    for (const attrDefinition of ATTRIBUTION_FIELD_DEFINITIONS) {
+      addOverride(attrDefinition.key, customFieldOverrides?.[attrDefinition.configKey], attrDefinition.keys, attrDefinition.names);
+    }
+
+    const customFieldsPayload: Array<{ id: string; value: string }> = [];
+    const matchedAttributionKeys = new Set<AttributionFieldName>();
+
+    for (const { value: val, keys, names, sourceKey } of customFieldDefinitions) {
       if (!val || val.trim() === '') {
         console.log('Skipping custom field (empty value)');
         continue;
@@ -463,12 +709,27 @@ async function sendToGoHighLevel(
       if (id) {
         customFieldsPayload.push({ id, value: val });
         console.log(`Added custom field: ${matchedKey ?? 'unknown'} = ${val}`);
+        if (sourceKey) {
+          matchedAttributionKeys.add(sourceKey);
+        }
       } else {
         console.log(`Custom field not found in GHL for keys: ${keys.join(', ')}`);
       }
     }
 
     console.log(`Successfully mapped ${customFieldsPayload.length} custom fields`);
+
+    const unmatchedAttributionNotes: string[] = [];
+    const attributionLabelByKey = ATTRIBUTION_FIELD_DEFINITIONS.reduce<Record<AttributionFieldName, string>>((acc, definition) => {
+      acc[definition.key] = definition.label;
+      return acc;
+    }, {} as Record<AttributionFieldName, string>);
+
+    for (const { key, value } of processedAttributionDefinitions) {
+      if (!matchedAttributionKeys.has(key)) {
+        unmatchedAttributionNotes.push(`${attributionLabelByKey[key]}: ${value}`);
+      }
+    }
 
     // Normalize phone to E.164 format (+1XXXXXXXXXX for US)
     let normalizedPhone = leadPayload.contact.phone;
@@ -500,6 +761,16 @@ async function sendToGoHighLevel(
       console.log(`✅ Sending ${customFieldsPayload.length} custom fields to GHL`);
     } else {
       console.warn('⚠️  No custom fields will be sent (none matched or none exist in GHL)');
+    }
+
+    if (unmatchedAttributionNotes.length > 0) {
+      const notesText = `Attribution Data:\n${unmatchedAttributionNotes.join('\n')}`;
+      if (typeof ghlPayload.notes === 'string' && ghlPayload.notes.trim() !== '') {
+        ghlPayload.notes = `${ghlPayload.notes}\n\n${notesText}`;
+      } else {
+        ghlPayload.notes = notesText;
+      }
+      console.log(`Adding attribution notes to GHL payload (${unmatchedAttributionNotes.length} items)`);
     }
 
     // Use Bearer authorization per GHL v2 API documentation
