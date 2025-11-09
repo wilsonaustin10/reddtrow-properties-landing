@@ -21,7 +21,13 @@
     <meta name="twitter:description" content="Get a fair cash offer for your house in 7 minutes or less. No repairs, no fees, no hassles." />
 
     <!-- DNS Prefetch for third-party domains -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
+    
+    <!-- Preconnect only to critical domains -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <!-- Critical CSS - Inline for faster First Paint -->
     <style>
@@ -35,7 +41,6 @@
         --card: 0 0% 100%;
         --border: 210 20% 90%;
         --muted-foreground: 210 6% 46%;
-        --radius: 0.5rem;
       }
       
       * {
@@ -45,21 +50,10 @@
       }
       
       body {
-        font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        font-family: 'Inter', system-ui, -apple-system, sans-serif;
         background: hsl(var(--background));
         color: hsl(var(--foreground));
         line-height: 1.5;
-      }
-      
-      /* Header critical styles */
-      header {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        backdrop-filter: blur(12px);
-        background: hsl(var(--background) / 0.95);
-        border-bottom: 1px solid hsl(var(--border));
-        contain: layout style;
       }
       
       /* Hero section critical styles with containment */
@@ -68,88 +62,20 @@
         position: relative;
         overflow: hidden;
         contain: layout style paint;
-        padding: 4rem 1rem;
       }
       
-      /* Grid layout */
-      .grid {
-        display: grid;
-        gap: 1rem;
-      }
-      
-      @media (min-width: 768px) {
-        .grid {
-          gap: 2rem;
-        }
-      }
-      
-      /* Button critical styles */
-      .urgency-button {
-        background: hsl(var(--primary));
-        color: hsl(var(--primary-foreground));
-        padding: 0.75rem 1.5rem;
-        border-radius: var(--radius);
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        transition: transform 0.2s;
-      }
-      
-      .urgency-button:hover {
-        transform: translateY(-2px);
+      /* Header critical styles */
+      header {
+        contain: layout style;
       }
       
       /* Form card critical styles */
       .lead-form {
         background: hsl(var(--card));
         border: 2px solid hsl(var(--primary));
-        border-radius: var(--radius);
-        padding: 2rem;
         contain: layout style;
       }
-      
-      /* Input styles */
-      input, textarea, select {
-        width: 100%;
-        padding: 0.5rem 0.75rem;
-        border: 1px solid hsl(var(--border));
-        border-radius: var(--radius);
-        font-family: inherit;
-        font-size: 1rem;
-      }
-      
-      input:focus, textarea:focus, select:focus {
-        outline: 2px solid hsl(var(--primary));
-        outline-offset: 2px;
-      }
     </style>
-    
-    <!-- Non-blocking CSS loading -->
-    <script>
-      // Preload CSS as non-blocking
-      (function() {
-        const cssObserver = new MutationObserver(function(mutations) {
-          mutations.forEach(function(mutation) {
-            mutation.addedNodes.forEach(function(node) {
-              if (node.nodeName === 'LINK' && node.rel === 'stylesheet' && node.href.includes('/assets/index-')) {
-                // Convert blocking stylesheet to preload
-                const preload = document.createElement('link');
-                preload.rel = 'preload';
-                preload.as = 'style';
-                preload.href = node.href;
-                preload.onload = function() {
-                  node.media = 'all';
-                };
-                node.media = 'print';
-                document.head.insertBefore(preload, node);
-                cssObserver.disconnect();
-              }
-            });
-          });
-        });
-        cssObserver.observe(document.head, { childList: true });
-      })();
-    </script>
     
     <title>Sell Your House Fast for Cash - Get Offer in 7 Minutes</title>
   </head>
@@ -158,31 +84,16 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Hybrid GTM Loading - loads on interaction or 2s fallback -->
+    <!-- Deferred Google Tag Manager - loads after critical content -->
     <script>
-      (function() {
-        var gtmLoaded = false;
-        
-        function loadGTM() {
-          if (gtmLoaded) return;
-          gtmLoaded = true;
-          
-          (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-          new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-          j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-          'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-          })(window,document,'script','dataLayer','GTM-MGDBJPQQ');
-        }
-        
-        // Load on user interaction
-        var events = ['scroll', 'click', 'touchstart', 'mousemove', 'keydown'];
-        events.forEach(function(event) {
-          window.addEventListener(event, loadGTM, { once: true, passive: true });
-        });
-        
-        // Fallback: load after 2 seconds regardless
-        setTimeout(loadGTM, 2000);
-      })();
+      // Defer GTM loading until after page is interactive
+      setTimeout(function() {
+        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+        })(window,document,'script','dataLayer','GTM-MGDBJPQQ');
+      }, 3000);
     </script>
     
     <!-- GTM noscript fallback -->
