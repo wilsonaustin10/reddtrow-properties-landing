@@ -35,6 +35,7 @@
         --card: 0 0% 100%;
         --border: 210 20% 90%;
         --muted-foreground: 210 6% 46%;
+        --radius: 0.5rem;
       }
       
       * {
@@ -50,33 +51,112 @@
         line-height: 1.5;
       }
       
+      /* Header critical styles */
+      header {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        backdrop-filter: blur(12px);
+        background: hsl(var(--background) / 0.95);
+        border-bottom: 1px solid hsl(var(--border));
+        contain: layout style;
+      }
+      
       /* Hero section critical styles with containment */
       .hero-section {
         background: var(--hero-gradient);
         position: relative;
         overflow: hidden;
         contain: layout style paint;
+        padding: 4rem 1rem;
       }
       
-      /* Header critical styles */
-      header {
-        contain: layout style;
+      /* Grid layout */
+      .grid {
+        display: grid;
+        gap: 1rem;
+      }
+      
+      @media (min-width: 768px) {
+        .grid {
+          gap: 2rem;
+        }
+      }
+      
+      /* Button critical styles */
+      .urgency-button {
+        background: hsl(var(--primary));
+        color: hsl(var(--primary-foreground));
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--radius);
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: transform 0.2s;
+      }
+      
+      .urgency-button:hover {
+        transform: translateY(-2px);
       }
       
       /* Form card critical styles */
       .lead-form {
         background: hsl(var(--card));
         border: 2px solid hsl(var(--primary));
+        border-radius: var(--radius);
+        padding: 2rem;
         contain: layout style;
       }
+      
+      /* Input styles */
+      input, textarea, select {
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        border: 1px solid hsl(var(--border));
+        border-radius: var(--radius);
+        font-family: inherit;
+        font-size: 1rem;
+      }
+      
+      input:focus, textarea:focus, select:focus {
+        outline: 2px solid hsl(var(--primary));
+        outline-offset: 2px;
+      }
     </style>
+    
+    <!-- Non-blocking CSS loading -->
+    <script>
+      // Preload CSS as non-blocking
+      (function() {
+        const cssObserver = new MutationObserver(function(mutations) {
+          mutations.forEach(function(mutation) {
+            mutation.addedNodes.forEach(function(node) {
+              if (node.nodeName === 'LINK' && node.rel === 'stylesheet' && node.href.includes('/assets/index-')) {
+                // Convert blocking stylesheet to preload
+                const preload = document.createElement('link');
+                preload.rel = 'preload';
+                preload.as = 'style';
+                preload.href = node.href;
+                preload.onload = function() {
+                  node.media = 'all';
+                };
+                node.media = 'print';
+                document.head.insertBefore(preload, node);
+                cssObserver.disconnect();
+              }
+            });
+          });
+        });
+        cssObserver.observe(document.head, { childList: true });
+      })();
+    </script>
     
     <title>Sell Your House Fast for Cash - Get Offer in 7 Minutes</title>
   </head>
 
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx" defer></script>
+    <script type="module" src="/src/main.tsx"></script>
     
     <!-- Hybrid GTM Loading - loads on interaction or 2s fallback -->
     <script>
