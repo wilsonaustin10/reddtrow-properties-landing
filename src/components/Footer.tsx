@@ -8,7 +8,7 @@ const Footer = () => {
         <div className="grid md:grid-cols-3 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <img src={emblemLogo} alt="Reddtrow Properties" className="h-24 w-auto" />
+            <img src={emblemLogo} alt="Reddtrow Properties" className="h-24 w-auto" width="168" height="134" loading="lazy" decoding="async" />
             <p className="text-primary-foreground/80 leading-relaxed">We're a local family-owned business that has been helping homeowners sell their properties quickly and fairly for over 26 years.</p>
             <div className="flex items-center space-x-2">
               
@@ -116,6 +116,10 @@ const Footer = () => {
                 src={bbbLogo} 
                 alt="BBB Accredited Business" 
                 className="h-20 w-auto mx-auto hover:opacity-80 transition-opacity"
+                width="160"
+                height="60"
+                loading="lazy"
+                decoding="async"
               />
             </a>
             

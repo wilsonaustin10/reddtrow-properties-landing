@@ -8,7 +8,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <Link to="/" className="hover:opacity-80 transition-opacity">
-              <img src={logo} alt="Reddtrow Properties Logo" className="h-16 w-auto" />
+              <img src={logo} alt="Reddtrow Properties Logo" className="h-16 w-auto" width="168" height="134" loading="eager" decoding="async" />
             </Link>
           </div>
           
