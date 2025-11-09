@@ -8,6 +8,31 @@
  * All configuration must be stored as Supabase Secrets.
  */
 
+export interface CustomFieldIdConfig {
+  askingPrice?: string;
+  timeline?: string;
+  propertyListed?: string;
+  condition?: string;
+  gclid?: string;
+  wbraid?: string;
+  gbraid?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmCampaignId?: string;
+  utmAdgroupId?: string;
+  utmTerm?: string;
+  utmDevice?: string;
+  utmCreative?: string;
+  utmNetwork?: string;
+  utmAssetGroup?: string;
+  utmHeadline?: string;
+  landingPage?: string;
+  referrer?: string;
+  sessionId?: string;
+  [key: string]: string | undefined;
+}
+
 export interface EdgeFunctionConfig {
   supabase: {
     url: string;
@@ -21,12 +46,7 @@ export interface EdgeFunctionConfig {
     ghl?: {
       apiKey: string;
       locationId?: string;
-      customFieldIds?: {
-        askingPrice?: string;
-        timeline?: string;
-        propertyListed?: string;
-        condition?: string;
-      };
+      customFieldIds?: CustomFieldIdConfig;
     };
   };
   analytics?: {
@@ -72,13 +92,39 @@ export function getEdgeFunctionConfig(): EdgeFunctionConfig {
   const ghlCustomFieldTimeline = Deno.env.get('GHL_CUSTOM_FIELD_TIMELINE_ID');
   const ghlCustomFieldPropertyListed = Deno.env.get('GHL_CUSTOM_FIELD_PROPERTY_LISTED_ID');
   const ghlCustomFieldCondition = Deno.env.get('GHL_CUSTOM_FIELD_CONDITION_ID');
+  const attributionFieldEnvMap: Record<keyof Omit<CustomFieldIdConfig, 'askingPrice' | 'timeline' | 'propertyListed' | 'condition'>, string> = {
+    gclid: 'GHL_CUSTOM_FIELD_GCLID_ID',
+    wbraid: 'GHL_CUSTOM_FIELD_WBRAID_ID',
+    gbraid: 'GHL_CUSTOM_FIELD_GBRAID_ID',
+    utmSource: 'GHL_CUSTOM_FIELD_UTM_SOURCE_ID',
+    utmMedium: 'GHL_CUSTOM_FIELD_UTM_MEDIUM_ID',
+    utmCampaign: 'GHL_CUSTOM_FIELD_UTM_CAMPAIGN_ID',
+    utmCampaignId: 'GHL_CUSTOM_FIELD_UTM_CAMPAIGNID_ID',
+    utmAdgroupId: 'GHL_CUSTOM_FIELD_UTM_ADGROUPID_ID',
+    utmTerm: 'GHL_CUSTOM_FIELD_UTM_TERM_ID',
+    utmDevice: 'GHL_CUSTOM_FIELD_UTM_DEVICE_ID',
+    utmCreative: 'GHL_CUSTOM_FIELD_UTM_CREATIVE_ID',
+    utmNetwork: 'GHL_CUSTOM_FIELD_UTM_NETWORK_ID',
+    utmAssetGroup: 'GHL_CUSTOM_FIELD_UTM_ASSETGROUP_ID',
+    utmHeadline: 'GHL_CUSTOM_FIELD_UTM_HEADLINE_ID',
+    landingPage: 'GHL_CUSTOM_FIELD_LANDING_PAGE_ID',
+    referrer: 'GHL_CUSTOM_FIELD_REFERRER_ID',
+    sessionId: 'GHL_CUSTOM_FIELD_SESSION_ID_ID'
+  };
   if (ghlApiKey && ghlApiKey.trim()) {
-    const customFieldIds = {
+    const customFieldIds: CustomFieldIdConfig = {
       askingPrice: ghlCustomFieldAskingPrice?.trim(),
       timeline: ghlCustomFieldTimeline?.trim(),
       propertyListed: ghlCustomFieldPropertyListed?.trim(),
       condition: ghlCustomFieldCondition?.trim()
     };
+
+    for (const [key, envVar] of Object.entries(attributionFieldEnvMap)) {
+      const envValue = Deno.env.get(envVar);
+      if (envValue && envValue.trim()) {
+        customFieldIds[key] = envValue.trim();
+      }
+    }
 
     const hasCustomFieldOverrides = Object.values(customFieldIds).some(Boolean);
 
