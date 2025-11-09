@@ -23,7 +23,8 @@ const Hero = () => {
     askingPrice: '',
     firstName: '',
     lastName: '',
-    email: ''
+    email: '',
+    website: '' // Honeypot field
   });
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -63,6 +64,7 @@ const Hero = () => {
           firstName: formData.firstName,
           lastName: formData.lastName,
           email: formData.email,
+          website: formData.website, // Honeypot field
         }
       });
 
@@ -170,6 +172,31 @@ const Hero = () => {
                 onChange={(e) => handleInputChange('email', e.target.value)}
                 required
                 className="h-12"
+              />
+            </div>
+            
+            {/* Honeypot field - hidden from humans, visible to bots */}
+            <div 
+              style={{ 
+                position: 'absolute', 
+                left: '-9999px',
+                width: '1px',
+                height: '1px',
+                opacity: 0,
+                pointerEvents: 'none'
+              }}
+              aria-hidden="true"
+            >
+              <Label htmlFor="website">Website</Label>
+              <Input
+                id="website"
+                name="website"
+                type="text"
+                placeholder="https://example.com"
+                value={formData.website}
+                onChange={(e) => handleInputChange('website', e.target.value)}
+                autoComplete="off"
+                tabIndex={-1}
               />
             </div>
             {formData.phone.trim() && (

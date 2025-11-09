@@ -42,7 +42,8 @@ const leadSchema = z.object({
   condition: z.enum(['poor', 'fair', 'good', 'excellent']).optional(),
   timeline: z.enum(['asap', '30days', '60days', '90days', '90plus']).optional(),
   askingPrice: z.string().trim().max(50, "Asking price too long").optional(),
-  smsConsent: z.boolean().optional()
+  smsConsent: z.boolean().optional(),
+  website: z.string().optional() // Honeypot field - should be empty
 });
 
 interface LeadData {
@@ -56,6 +57,7 @@ interface LeadData {
   firstName: string;
   lastName: string;
   email: string;
+  website?: string; // Honeypot field
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -99,6 +101,21 @@ const handler = async (req: Request): Promise<Response> => {
       throw validationError;
     }
     
+    // Honeypot check - reject if filled (bot detection)
+    if (leadData.website && leadData.website.trim() !== '') {
+      console.log('🤖 Bot detected: honeypot field filled with value:', leadData.website);
+      
+      // Return success response to avoid tipping off the bot
+      return new Response(JSON.stringify({
+        success: true,
+        message: 'Lead submitted successfully'
+      }), {
+        status: 200,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
+    console.log('✅ Honeypot check passed (field empty)');
     console.log('Received validated lead data:', { ...leadData, phone: '***', email: '***' });
     
     // Initialize Supabase client with service role key for database operations
