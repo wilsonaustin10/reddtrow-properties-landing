@@ -1,0 +1,75 @@
+export const uglyHousesContent = {
+  slug: 'ugly-houses',
+  adGroup: 'ugly_houses_as_is',
+  meta: {
+    title: 'We Buy Ugly Houses for Cash | Any Condition, Fair Offer',
+    description: 'We specialize in buying ugly, damaged & outdated homes. No repairs, no cleaning. Get a fair cash offer today.',
+  },
+  hero: {
+    h1: 'We Buy Ugly Houses — No Repairs Needed, Ever',
+    h2: 'Fire Damage? Foundation Issues? Hoarder House? We Don\'t Care.',
+    badge: 'Any Condition Accepted',
+    bullets: [
+      'We buy houses in ANY condition',
+      'No cleaning, no repairs, no inspections',
+      'Leave everything behind — we handle it',
+      'Fair cash offer regardless of condition',
+    ],
+  },
+  benefits: [
+    { icon: 'home', title: 'We Buy As-Is', description: 'Ugly, damaged, outdated — we don\'t care. We buy it exactly as it sits.' },
+    { icon: 'x', title: 'No Repairs Ever', description: 'Don\'t spend a dime on repairs. We handle all the work after closing.' },
+    { icon: 'hammer', title: 'Any Damage Accepted', description: 'Fire, water, storm, foundation — we\'ve seen it all and bought it all.' },
+    { icon: 'check', title: 'No Cleaning Required', description: 'Leave the mess. Leave the junk. Leave everything you don\'t want.' },
+    { icon: 'cash', title: 'Fair Offers', description: 'We make honest offers based on condition. No lowball tactics.' },
+    { icon: 'heart', title: 'No Judgment', description: 'We\'re not here to judge. We\'re here to help you move forward.' },
+  ],
+  process: [
+    { step: 1, title: 'Tell Us About Your Property', description: 'Be honest about the condition — it won\'t affect whether we buy, just our offer.' },
+    { step: 2, title: 'Get Your Cash Offer', description: 'We\'ll make a fair offer based on the property\'s potential, not its current state.' },
+    { step: 3, title: 'Close & Walk Away', description: 'Leave everything. We take the property as-is and you get cash.' },
+  ],
+  faqs: [
+    { q: 'Do you really buy houses in any condition?', a: 'Yes, truly any condition. Fire damage, flood damage, foundation issues, mold, hoarder situations, condemned properties — we\'ve bought them all.' },
+    { q: 'Will the condition affect my offer?', a: 'Yes, condition is one factor we consider, but it doesn\'t mean we won\'t buy. We make fair offers based on the property\'s potential value after repairs.' },
+    { q: 'Do I need to clean out the house first?', a: 'Not at all. Leave furniture, appliances, junk, everything. We handle all cleanouts after closing.' },
+    { q: 'What about houses with code violations?', a: 'We buy properties with code violations regularly. This is not a problem for us.' },
+    { q: 'What if my house has structural damage?', a: 'We buy properties with structural issues including foundation problems, roof damage, and more. Nothing scares us away.' },
+    { q: 'What\'s the ugliest house you\'ve bought?', a: 'We\'ve bought houses that had trees growing through the roof, severe hoarder situations, and properties others said were "unsellable." If it has a deed, we can buy it.' },
+  ],
+  testimonials: [
+    {
+      name: 'Richard S.',
+      location: 'Fort Worth, TX',
+      text: 'My house had major foundation issues that would cost $40k to fix. Every realtor said it was unsellable. These guys made me a fair offer and closed in 12 days.',
+      situation: 'Foundation Problems',
+    },
+    {
+      name: 'Carol B.',
+      location: 'Dallas, TX',
+      text: 'After my mother passed, we inherited her house. It had been neglected for years and was full of stuff. They bought it as-is and we didn\'t have to clean a thing.',
+      situation: 'Hoarder House',
+    },
+    {
+      name: 'Daniel M.',
+      location: 'Houston, TX',
+      text: 'Fire damaged my rental property. Insurance didn\'t cover everything and I couldn\'t afford repairs. They bought it for a fair price and I could finally move on.',
+      situation: 'Fire Damage',
+    },
+  ],
+  // Unique section: Conditions we buy
+  conditions: [
+    'Foundation problems',
+    'Roof damage',
+    'Fire/smoke damage',
+    'Water damage / mold',
+    'Hoarder situations',
+    'Outdated / needs full renovation',
+    'Code violations',
+    'Structural issues',
+    'Storm damage',
+    'Termite damage',
+    'Condemned properties',
+    'Any other condition',
+  ],
+};
