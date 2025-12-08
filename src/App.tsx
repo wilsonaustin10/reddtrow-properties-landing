@@ -12,6 +12,20 @@ import ThankYou from "./pages/ThankYou";
 import Testimonials from "./pages/Testimonials";
 import GhlDiagnostic from "./pages/GhlDiagnostic";
 
+// Landing Pages - Tier 1 (Highest Intent, Lowest CPC)
+import {
+  ForeclosurePage,
+  DivorcePage,
+  RelocationPage,
+  NeedToSellPage,
+  UglyHousesPage,
+  SellAsIsPage,
+  CompaniesThatBuyHousesPage,
+  SellFastPage,
+  WeBuyHousesPage,
+  CashBuyersPage,
+} from "./pages/landing";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -28,6 +42,23 @@ const App = () => (
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/thank-you" element={<ThankYou />} />
           <Route path="/ghl-diagnostic" element={<GhlDiagnostic />} />
+
+          {/* Landing Pages - Tier 1: Highest Intent, Lowest CPC (60% budget) */}
+          <Route path="/foreclosure" element={<ForeclosurePage />} />
+          <Route path="/divorce" element={<DivorcePage />} />
+          <Route path="/relocation" element={<RelocationPage />} />
+          <Route path="/need-to-sell" element={<NeedToSellPage />} />
+          <Route path="/ugly-houses" element={<UglyHousesPage />} />
+          <Route path="/sell-as-is" element={<SellAsIsPage />} />
+          <Route path="/companies-that-buy-houses" element={<CompaniesThatBuyHousesPage />} />
+
+          {/* Landing Pages - Tier 2: Core Volume (25% budget) */}
+          <Route path="/sell-fast" element={<SellFastPage />} />
+
+          {/* Landing Pages - Tier 3: Brand & Volume (15% budget) */}
+          <Route path="/we-buy-houses" element={<WeBuyHousesPage />} />
+          <Route path="/cash-buyers" element={<CashBuyersPage />} />
+
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

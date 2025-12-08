@@ -1,0 +1,10 @@
+export { default as ForeclosurePage } from './Foreclosure';
+export { default as DivorcePage } from './Divorce';
+export { default as RelocationPage } from './Relocation';
+export { default as NeedToSellPage } from './NeedToSell';
+export { default as UglyHousesPage } from './UglyHouses';
+export { default as SellAsIsPage } from './SellAsIs';
+export { default as CompaniesThatBuyHousesPage } from './CompaniesThatBuyHouses';
+export { default as SellFastPage } from './SellFast';
+export { default as WeBuyHousesPage } from './WeBuyHouses';
+export { default as CashBuyersPage } from './CashBuyers';
