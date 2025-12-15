@@ -1,5 +1,5 @@
 import { Star, Shield, Award } from "lucide-react";
-import bbbLogo from "@/assets/bbb-logo.jpg";
+import bbbLogo from "@/assets/bbb-logo.webp";
 
 interface TrustBarProps {
   showBBB?: boolean;
@@ -40,7 +40,7 @@ const TrustBar = ({ showBBB = true }: TrustBarProps) => {
               rel="noopener noreferrer"
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
             >
-              <img src={bbbLogo} alt="BBB Accredited Business" className="h-10 w-auto" />
+              <img src={bbbLogo} alt="BBB Accredited Business" className="h-10 w-auto" decoding="async" width="25" height="40" />
             </a>
           )}
 

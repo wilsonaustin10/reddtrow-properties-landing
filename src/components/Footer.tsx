@@ -1,14 +1,14 @@
 import { Phone, Mail, MapPin, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import emblemLogo from "@/assets/reddtrow-emblem.png";
-import bbbLogo from "@/assets/bbb-logo.jpg";
+import emblemLogo from "@/assets/reddtrow-emblem.webp";
+import bbbLogo from "@/assets/bbb-logo.webp";
 const Footer = () => {
   return <footer className="bg-primary text-primary-foreground">
       <div className="container mx-auto px-4 py-12">
         <div className="grid md:grid-cols-3 gap-8">
           {/* Company Info */}
           <div className="space-y-4">
-            <img src={emblemLogo} alt="Reddtrow Properties" className="h-24 w-auto" />
+            <img src={emblemLogo} alt="Reddtrow Properties" className="h-24 w-auto" loading="lazy" decoding="async" width="77" height="96" />
             <p className="text-primary-foreground/80 leading-relaxed">We're a local family-owned business that has been helping homeowners sell their properties quickly and fairly for over 26 years.</p>
             <div className="flex items-center space-x-2">
               
@@ -112,10 +112,14 @@ const Footer = () => {
               rel="noopener noreferrer"
               className="inline-block"
             >
-              <img 
-                src={bbbLogo} 
-                alt="BBB Accredited Business" 
+              <img
+                src={bbbLogo}
+                alt="BBB Accredited Business"
                 className="h-20 w-auto mx-auto hover:opacity-80 transition-opacity"
+                loading="lazy"
+                decoding="async"
+                width="49"
+                height="80"
               />
             </a>
             

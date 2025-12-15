@@ -19,10 +19,14 @@ const About = () => {
           <div className="flex flex-col md:flex-row gap-8">
             <div className="w-full md:w-1/3 flex-shrink-0">
               <div className="bg-muted/30 p-6 rounded-lg">
-                <img 
-                  src={sandraHeadshot} 
-                  alt="Sandra Nesbitt - Founder of Reddtrow Properties" 
+                <img
+                  src={sandraHeadshot}
+                  alt="Sandra Nesbitt - Founder of Reddtrow Properties"
                   className="w-full rounded-lg mb-4"
+                  loading="lazy"
+                  decoding="async"
+                  width="300"
+                  height="300"
                 />
                 <p className="text-sm text-foreground text-center">
                   Sandra Nesbitt, Owner of Reddtrow Properties, LLC

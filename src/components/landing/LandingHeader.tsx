@@ -28,7 +28,7 @@ const LandingHeader = ({
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="hover:opacity-80 transition-opacity">
-            <img src={logo} alt="Reddtrow Properties" className="h-12 md:h-14 w-auto" />
+            <img src={logo} alt="Reddtrow Properties" className="h-12 md:h-14 w-auto" fetchPriority="high" decoding="async" width="127" height="56" />
           </Link>
 
           {/* Phone CTA */}

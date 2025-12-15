@@ -1,6 +1,6 @@
 import { Phone, Mail, MapPin } from "lucide-react";
 import { Link } from "react-router-dom";
-import emblemLogo from "@/assets/reddtrow-emblem.png";
+import emblemLogo from "@/assets/reddtrow-emblem.webp";
 
 interface LandingFooterProps {
   phoneNumber?: string;
@@ -17,7 +17,7 @@ const LandingFooter = ({
         <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
           {/* Company Info */}
           <div className="text-center md:text-left">
-            <img src={emblemLogo} alt="Reddtrow Properties" className="h-16 w-auto mx-auto md:mx-0 mb-4" />
+            <img src={emblemLogo} alt="Reddtrow Properties" className="h-16 w-auto mx-auto md:mx-0 mb-4" loading="lazy" decoding="async" width="51" height="64" />
             <p className="text-primary-foreground/80 text-sm leading-relaxed">
               We're local cash home buyers helping homeowners sell their properties quickly and fairly.
             </p>
