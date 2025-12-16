@@ -2,369 +2,85 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+    <title>Sell Your House Fast for Cash - Get Offer in 7 Minutes</title>
+    <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png" />
+
     <!-- Meta Tags -->
     <meta name="description" content="Get a fair cash offer for your house in 7 minutes or less. We buy houses in any condition - no repairs, no fees, no hassles. Close in as little as 7 days." />
-    <meta name="keywords" content="sell house fast, cash home buyers, we buy houses, sell house as is, fast home sale" />
-    <meta name="author" content="Reddtrow Properties, LLC" />
-    
-    <!-- Open Graph / Facebook -->
+
+    <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Sell Your House Fast for Cash - Get Offer in 7 Minutes" />
     <meta property="og:description" content="Get a fair cash offer for your house in 7 minutes or less. No repairs, no fees, no hassles." />
-    
-    <!-- Twitter -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Sell Your House Fast for Cash - Get Offer in 7 Minutes" />
-    <meta name="twitter:description" content="Get a fair cash offer for your house in 7 minutes or less. No repairs, no fees, no hassles." />
 
-    <!-- DNS Prefetch for third-party domains -->
-    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
-    <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-    <link rel="dns-prefetch" href="https://scripts.clixtell.com" />
-    <link rel="dns-prefetch" href="https://www.gstatic.com" />
-
-    <!-- Preconnect to critical domains (fonts load immediately) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-    <!-- Preconnect to deferred third-party domains (GTM loads after 3s) -->
-    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
-    <link rel="preconnect" href="https://scripts.clixtell.com" crossorigin />
-    <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
-
-    <!-- Critical CSS - Inline for faster First Paint -->
+    <!-- Critical CSS - Minimal for fastest FCP -->
     <style>
-      /* Critical above-the-fold styles */
-      :root {
-        --background: 0 0% 100%;
-        --foreground: 210 11% 15%;
-        --primary: 1 64% 28%;
-        --primary-foreground: 0 0% 100%;
-        --hero-gradient: linear-gradient(135deg, hsl(1 64% 28%), hsl(1 64% 38%));
-        --card: 0 0% 100%;
-        --border: 210 20% 90%;
-        --muted-foreground: 210 6% 46%;
-      }
-      
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-      
-      body {
-        font-family: 'Inter', system-ui, -apple-system, sans-serif;
-        background: hsl(var(--background));
-        color: hsl(var(--foreground));
-        line-height: 1.5;
-        text-rendering: optimizeSpeed;
-        -webkit-font-smoothing: antialiased;
-      }
-
-      /* Reserve space for mobile sticky bar to prevent CLS */
-      @media (max-width: 767px) {
-        body {
-          padding-bottom: 56px; /* Height of mobile sticky bar */
-        }
-      }
-      
-      /* Hero section critical styles with containment */
-      .hero-section {
-        background: var(--hero-gradient);
-        position: relative;
-        overflow: hidden;
-        contain: layout style paint;
-      }
-      
-      /* Header critical styles */
-      header {
-        contain: layout style;
-      }
-      
-      /* Form card critical styles */
-      .lead-form {
-        background: hsl(var(--card));
-        border: 2px solid hsl(var(--primary));
-        contain: layout style;
-      }
+      *{margin:0;padding:0;box-sizing:border-box}
+      body{font-family:system-ui,-apple-system,sans-serif;background:#fff;color:#1a1a1a}
+      @media(max-width:767px){body{padding-bottom:56px}}
+      .sk-wrap{min-height:100vh;background:#fff}
+      .sk-hdr{height:72px;background:#fff;border-bottom:1px solid #e5e7eb;display:flex;align-items:center;justify-content:space-between;padding:0 1rem}
+      .sk-hero{min-height:550px;background:linear-gradient(135deg,#8B2828,#a33232);display:flex;align-items:center;padding:2rem 1rem}
+      .sk-form{background:#fff;border-radius:12px;padding:1.5rem;max-width:28rem;margin:0 auto;border:2px solid #8B2828;min-height:480px}
+      .sk-bar{position:fixed;bottom:0;left:0;right:0;height:56px;background:#4F4F4F;display:none}
+      @media(max-width:767px){.sk-bar{display:flex;align-items:center;justify-content:center}}
     </style>
-
-    <script type="module">
-      function runAttributionScript() {
-        (function () {
-          try {
-            var params = new URLSearchParams(window.location.search);
-            var now = new Date().toISOString();
-            var lp = location.href.split('#')[0];
-            var ref = document.referrer || '(direct)';
-
-            function get(k) {
-              return (params.get(k) || '').trim();
-            }
-
-            var click = {
-              gclid: get('gclid'),
-              wbraid: get('wbraid'),
-              gbraid: get('gbraid'),
-              utm_source: get('utm_source') || 'google',
-              utm_medium: get('utm_medium') || 'cpc',
-              utm_campaign: get('utm_campaign'),
-              utm_campaignid: get('utm_campaignid'),
-              utm_adgroupid: get('utm_adgroupid'),
-              utm_term: get('utm_term'),
-              utm_device: get('utm_device'),
-              utm_creative: get('utm_creative'),
-              utm_network: get('utm_network'),
-              utm_assetgroup: get('utm_assetgroup'),
-              utm_headline: get('utm_headline'),
-              landing_page: lp,
-              referrer: ref,
-              ts: now,
-            };
-
-            function setCookie(name, val, days) {
-              var maxAge = days ? days * 24 * 60 * 60 : 60 * 60 * 24 * 90; // default 90d
-              document.cookie =
-                name +
-                '=' +
-                encodeURIComponent(JSON.stringify(val)) +
-                '; Max-Age=' +
-                maxAge +
-                '; Path=/; SameSite=Lax';
-            }
-            function getCookie(name) {
-              var m = document.cookie.match(
-                '(?:^|; )' +
-                  name.replace(/([.$?*|{}()[\]\\/+^])/g, '\\$1') +
-                  '=([^;]*)'
-              );
-              return m ? JSON.parse(decodeURIComponent(m[1])) : null;
-            }
-            function uuid() {
-              return crypto && crypto.randomUUID
-                ? crypto.randomUUID()
-                : Date.now() + '-' + Math.random().toString(16).slice(2);
-            }
-
-            var hasClickSignal = Object.keys(click).some(function (k) {
-              return !!click[k];
-            });
-            var ft = getCookie('_aa_ft') || (hasClickSignal ? click : null);
-            var lt = hasClickSignal ? click : getCookie('_aa_lt') || null;
-
-            if (ft) setCookie('_aa_ft', ft);
-            if (lt) setCookie('_aa_lt', lt);
-
-            function applyToForm(form) {
-              var data = Object.assign({}, ft || {}, lt || {});
-              data.session_id = data.session_id || uuid();
-
-              var fields = [
-                'gclid',
-                'wbraid',
-                'gbraid',
-                'utm_source',
-                'utm_medium',
-                'utm_campaign',
-                'utm_campaignid',
-                'utm_adgroupid',
-                'utm_term',
-                'utm_device',
-                'utm_creative',
-                'utm_network',
-                'utm_assetgroup',
-                'utm_headline',
-                'landing_page',
-                'referrer',
-                'session_id',
-              ];
-
-              fields.forEach(function (f) {
-                var sel =
-                  '[name="' +
-                  f +
-                  '"],[name="custom_' +
-                  f +
-                  '"],[data-field="' +
-                  f +
-                  '"]';
-                var input = form.querySelector(sel);
-                if (!input) {
-                  input = document.createElement('input');
-                  input.type = 'hidden';
-                  input.name = f;
-                  form.appendChild(input);
-                }
-                input.value = data[f] || '';
-              });
-            }
-
-            function init() {
-              document.querySelectorAll('form').forEach(applyToForm);
-            }
-            init();
-            var ob = new MutationObserver(init);
-            ob.observe(document.documentElement, { subtree: true, childList: true });
-          } catch (e) {
-            console && console.warn('Attribution script error', e);
-          }
-        })();
-      }
-
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(runAttributionScript);
-      } else if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', runAttributionScript, { once: true });
-      } else {
-        runAttributionScript();
-      }
-    </script>
-
-    <title>Sell Your House Fast for Cash - Get Offer in 7 Minutes</title>
   </head>
 
   <body>
     <div id="root">
-      <!-- Hero skeleton - shows instant paint while JS loads, replaced by React -->
-      <!-- Matches LandingLayout, LandingHeader, and LandingHero dimensions exactly to prevent CLS -->
-      <div style="
-        min-height: 100vh;
-        background: hsl(0 0% 100%);
-        contain: layout;
-        isolation: isolate;
-      ">
-        <!-- Header skeleton - matches LandingHeader height: 72px -->
-        <div style="
-          height: 72px;
-          background: rgba(255,255,255,0.95);
-          border-bottom: 1px solid hsl(210 20% 90%);
-          padding: 0.75rem 1rem;
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          contain: layout style;
-        ">
-          <div style="width: 127px; height: 56px; background: hsl(210 16% 93%); border-radius: 0.5rem;"></div>
-          <div style="width: 120px; height: 40px; background: hsl(270 1% 31%); border-radius: 0.5rem;"></div>
+      <!-- Minimal skeleton for instant FCP -->
+      <div class="sk-wrap">
+        <div class="sk-hdr">
+          <div style="width:127px;height:56px;background:#f3f4f6;border-radius:8px"></div>
+          <div style="width:120px;height:40px;background:#4F4F4F;border-radius:8px"></div>
         </div>
-        <!-- Hero skeleton - matches LandingHero min-h-[550px] -->
-        <div style="
-          min-height: 550px;
-          background: linear-gradient(135deg, hsl(1 64% 28%), hsl(1 64% 38%));
-          display: flex;
-          align-items: center;
-          padding: 2rem 1rem;
-          contain: layout style paint;
-        ">
-          <div style="
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-            width: 100%;
-            max-width: 1280px;
-            margin: 0 auto;
-          ">
-            <!-- Form card skeleton - matches LeadForm Card -->
-            <div style="
-              background: white;
-              border-radius: 0.75rem;
-              padding: 1.5rem;
-              min-height: 480px;
-              border: 2px solid hsl(1 64% 28%);
-              max-width: 28rem;
-              margin: 0 auto;
-              box-shadow: 0 10px 30px -10px rgba(139, 40, 40, 0.3);
-            ">
-              <!-- Form header -->
-              <div style="height: 1.75rem; background: hsl(1 64% 28%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 70%;"></div>
-              <div style="height: 1rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 1.5rem; width: 50%;"></div>
-              <!-- Address field -->
-              <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 30%;"></div>
-              <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid hsl(210 20% 90%);"></div>
-              <!-- Name fields -->
-              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
-                <div>
-                  <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 60%;"></div>
-                  <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; border: 1px solid hsl(210 20% 90%);"></div>
-                </div>
-                <div>
-                  <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 60%;"></div>
-                  <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; border: 1px solid hsl(210 20% 90%);"></div>
-                </div>
-              </div>
-              <!-- Phone field -->
-              <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 35%;"></div>
-              <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid hsl(210 20% 90%);"></div>
-              <!-- Email field -->
-              <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 35%;"></div>
-              <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid hsl(210 20% 90%);"></div>
-              <!-- Submit button -->
-              <div style="height: 3.5rem; background: linear-gradient(135deg, hsl(270 1% 31%), hsl(270 1% 26%)); border-radius: 0.5rem; margin-top: 1rem;"></div>
+        <div class="sk-hero">
+          <div class="sk-form">
+            <div style="height:28px;background:#8B2828;border-radius:4px;margin-bottom:8px;width:70%"></div>
+            <div style="height:16px;background:#f3f4f6;border-radius:4px;margin-bottom:24px;width:50%"></div>
+            <div style="height:48px;background:#f9fafb;border-radius:8px;margin-bottom:16px;border:1px solid #e5e7eb"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px">
+              <div style="height:48px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb"></div>
+              <div style="height:48px;background:#f9fafb;border-radius:8px;border:1px solid #e5e7eb"></div>
             </div>
+            <div style="height:48px;background:#f9fafb;border-radius:8px;margin-bottom:16px;border:1px solid #e5e7eb"></div>
+            <div style="height:48px;background:#f9fafb;border-radius:8px;margin-bottom:16px;border:1px solid #e5e7eb"></div>
+            <div style="height:56px;background:#4F4F4F;border-radius:8px;margin-top:16px"></div>
           </div>
         </div>
       </div>
-      <!-- Mobile sticky bar skeleton - matches LandingHeader mobile bar -->
-      <div id="mobile-bar-skeleton" style="
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        height: 56px;
-        background: hsl(270 1% 31%);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 50;
-        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
-      ">
-        <div style="width: 24px; height: 24px; background: rgba(255,255,255,0.3); border-radius: 50%; margin-right: 12px;"></div>
-        <div style="width: 140px; height: 20px; background: rgba(255,255,255,0.3); border-radius: 4px;"></div>
-      </div>
-      <style>
-        @media (min-width: 768px) {
-          #mobile-bar-skeleton { display: none !important; }
-        }
-      </style>
+      <div class="sk-bar"></div>
     </div>
+
+    <!-- Main app - defer loading -->
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Deferred Google Tag Manager - loads on user interaction for better performance -->
+
+    <!-- Attribution script - runs after paint -->
     <script>
-      // Initialize dataLayer queue immediately (events queue before GTM loads)
-      window.dataLayer = window.dataLayer || [];
-
-      // GTM loader - only runs once
-      function loadGTM() {
-        if (window.__gtmLoaded) return;
-        window.__gtmLoaded = true;
-
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-        new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-        j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-        'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-        })(window,document,'script','dataLayer','GTM-MGDBJPQQ');
-      }
-
-      // Load GTM on first user interaction (scroll, click, touch, or keypress)
-      ['scroll', 'click', 'touchstart', 'keydown'].forEach(function(event) {
-        document.addEventListener(event, loadGTM, { once: true, passive: true });
-      });
-
-      // Fallback: load when browser is idle, or after 4s max
-      if ('requestIdleCallback' in window) {
-        requestIdleCallback(loadGTM, { timeout: 4000 });
-      } else {
-        setTimeout(loadGTM, 3000);
-      }
+      requestIdleCallback?requestIdleCallback(function(){
+        var p=new URLSearchParams(location.search),s=sessionStorage,c=document.cookie;
+        var d={gclid:p.get('gclid')||'',wbraid:p.get('wbraid')||'',gbraid:p.get('gbraid')||'',
+          utm_source:p.get('utm_source')||'google',utm_medium:p.get('utm_medium')||'cpc',
+          utm_campaign:p.get('utm_campaign')||'',landing_page:location.pathname,
+          referrer:document.referrer||'',session_id:crypto.randomUUID?.()??Date.now()+'-'+Math.random().toString(36).slice(2)};
+        Object.keys(d).forEach(function(k){if(d[k])try{s.setItem(k,d[k])}catch(e){}});
+        document.cookie='_aa_lt='+encodeURIComponent(JSON.stringify(d))+';Max-Age=7776000;Path=/;SameSite=Lax';
+      }):setTimeout(arguments.callee,100);
     </script>
-    
-    <!-- GTM noscript fallback -->
-    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MGDBJPQQ"
-    height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+
+    <!-- GTM - loads on interaction -->
+    <script>
+      window.dataLayer=window.dataLayer||[];
+      function loadGTM(){if(window.__gtm)return;window.__gtm=1;
+        var s=document.createElement('script');s.async=1;
+        s.src='https://www.googletagmanager.com/gtm.js?id=GTM-MGDBJPQQ';
+        document.head.appendChild(s)}
+      ['scroll','click','touchstart'].forEach(function(e){
+        document.addEventListener(e,loadGTM,{once:1,passive:1})});
+      requestIdleCallback?requestIdleCallback(loadGTM,{timeout:4000}):setTimeout(loadGTM,3000);
+    </script>
+    <noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-MGDBJPQQ" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
   </body>
 </html>
