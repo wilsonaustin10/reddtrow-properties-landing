@@ -24,10 +24,17 @@
     <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
     <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
     <link rel="dns-prefetch" href="https://www.googletagmanager.com" />
-    
-    <!-- Preconnect only to critical domains -->
+    <link rel="dns-prefetch" href="https://scripts.clixtell.com" />
+    <link rel="dns-prefetch" href="https://www.gstatic.com" />
+
+    <!-- Preconnect to critical domains (fonts load immediately) -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Preconnect to deferred third-party domains (GTM loads after 3s) -->
+    <link rel="preconnect" href="https://www.googletagmanager.com" crossorigin />
+    <link rel="preconnect" href="https://scripts.clixtell.com" crossorigin />
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
 
     <!-- Critical CSS - Inline for faster First Paint -->
     <style>
