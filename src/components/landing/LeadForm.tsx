@@ -9,6 +9,17 @@ import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { Phone, Loader2, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
+// Error message component that reserves space to prevent CLS
+const FormError = ({ message }: { message?: string }) => (
+  <p
+    className="text-xs text-destructive min-h-[1rem]"
+    style={{ visibility: message ? 'visible' : 'hidden' }}
+    aria-live="polite"
+  >
+    {message || '\u00A0'}
+  </p>
+);
+
 const trackingFieldNames = [
   'gclid',
   'wbraid',
@@ -324,7 +335,7 @@ const LeadForm = ({
                 onBlur={() => handleBlur('firstName')}
                 className={`h-12 ${errors.firstName ? 'border-destructive' : ''}`}
               />
-              {errors.firstName && <p className="text-xs text-destructive">{errors.firstName}</p>}
+              <FormError message={errors.firstName} />
             </div>
             <div className="space-y-1">
               <Label htmlFor="lastName" className="text-foreground text-sm">Last Name *</Label>
@@ -337,7 +348,7 @@ const LeadForm = ({
                 onBlur={() => handleBlur('lastName')}
                 className={`h-12 ${errors.lastName ? 'border-destructive' : ''}`}
               />
-              {errors.lastName && <p className="text-xs text-destructive">{errors.lastName}</p>}
+              <FormError message={errors.lastName} />
             </div>
           </div>
 
@@ -355,7 +366,7 @@ const LeadForm = ({
               onBlur={() => handleBlur('phone')}
               className={`h-12 ${errors.phone ? 'border-destructive' : ''}`}
             />
-            {errors.phone && <p className="text-xs text-destructive">{errors.phone}</p>}
+            <FormError message={errors.phone} />
           </div>
 
           <div className="space-y-1">
@@ -369,7 +380,7 @@ const LeadForm = ({
               onBlur={() => handleBlur('email')}
               className={`h-12 ${errors.email ? 'border-destructive' : ''}`}
             />
-            {errors.email && <p className="text-xs text-destructive">{errors.email}</p>}
+            <FormError message={errors.email} />
           </div>
 
           {/* Honeypot field */}
@@ -407,7 +418,7 @@ const LeadForm = ({
               . By submitting, you consent to receive SMS/calls from Reddtrow Properties LLC. Msg & data rates may apply.
             </Label>
           </div>
-          {errors.smsConsent && <p className="text-xs text-destructive">{errors.smsConsent}</p>}
+          <FormError message={errors.smsConsent} />
 
           {/* Hidden tracking fields */}
           {trackingFieldNames.map((key) => (
