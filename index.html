@@ -272,16 +272,30 @@
     </div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Deferred Google Tag Manager - loads after critical content -->
+    <!-- Deferred Google Tag Manager - loads on user interaction for better performance -->
     <script>
-      // Defer GTM loading until after page is interactive
-      setTimeout(function() {
+      // Initialize dataLayer queue immediately (events queue before GTM loads)
+      window.dataLayer = window.dataLayer || [];
+
+      // GTM loader - only runs once
+      function loadGTM() {
+        if (window.__gtmLoaded) return;
+        window.__gtmLoaded = true;
+
         (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
         new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
         j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
         })(window,document,'script','dataLayer','GTM-MGDBJPQQ');
-      }, 3000);
+      }
+
+      // Load GTM on first user interaction (scroll, click, touch, or keypress)
+      ['scroll', 'click', 'touchstart', 'keydown'].forEach(function(event) {
+        document.addEventListener(event, loadGTM, { once: true, passive: true });
+      });
+
+      // Fallback: load after 5 seconds if no interaction (ensures bounce tracking)
+      setTimeout(loadGTM, 5000);
     </script>
     
     <!-- GTM noscript fallback -->

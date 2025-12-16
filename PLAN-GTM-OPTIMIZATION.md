@@ -72,17 +72,20 @@ setTimeout(loadGTM, 5000);
 
 ### Phase 2: Optimize GTM Container (High Impact, Requires GTM Access)
 
-**Issue**: Two Google Ads accounts loading separate gtag.js scripts:
-- `AW-176...`
-- `AW-101...`
+**Issue**: Two Google Ads gtag.js scripts loading (PSI shows AW-176... and AW-101...)
+
+**Correct Configuration**:
+- Google Ads ID: `AW-17690667024`
+- Conversion Label: `Qx8zCNnzvLcbEJDQyPNB`
+- Full conversion target: `AW-17690667024/Qx8zCNnzvLcbEJDQyPNB`
 
 **Recommendation**:
 1. **Audit GTM container** at https://tagmanager.google.com
-2. **Consolidate Google Ads tags** - Use a single Google Ads Conversion Linker tag
-3. **Remove duplicate gtag.js loads** - Configure both conversion IDs in one tag
-4. **Use GTM's built-in Google Ads tag** instead of raw gtag.js
+2. **Remove duplicate/incorrect Google Ads tags** - Only AW-17690667024 should exist
+3. **Use single Conversion Linker tag** instead of multiple gtag.js loads
+4. **Verify all conversion tags** use the correct ID/label pair above
 
-**Expected Savings**: ~100 KiB (one less gtag.js load)
+**Expected Savings**: ~100 KiB (eliminates duplicate gtag.js load)
 
 ---
 
