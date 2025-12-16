@@ -20,17 +20,33 @@ export default defineConfig(({ mode }) => ({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
+            // Core React runtime (required immediately)
+            if (id.includes('react-dom') || (id.includes('/react/') && !id.includes('react-router'))) {
               return 'vendor-react';
             }
+            // React Router (can be deferred slightly but needed for routing)
+            if (id.includes('react-router')) {
+              return 'vendor-router';
+            }
+            // Form handling libraries (only needed after form interaction)
+            if (id.includes('react-hook-form') || id.includes('zod') || id.includes('@hookform')) {
+              return 'vendor-forms';
+            }
+            // Supabase client (only needed for form submission)
+            if (id.includes('@supabase')) {
+              return 'vendor-supabase';
+            }
+            // TanStack Query (state management)
+            if (id.includes('@tanstack')) {
+              return 'vendor-query';
+            }
+            // Radix UI core primitives (UI components)
             if (id.includes('@radix-ui')) {
               return 'vendor-radix';
             }
+            // Icons (tree-shakeable, loaded with components)
             if (id.includes('lucide-react')) {
               return 'vendor-icons';
-            }
-            if (id.includes('@tanstack/react-query')) {
-              return 'vendor-query';
             }
           }
         }
@@ -39,6 +55,8 @@ export default defineConfig(({ mode }) => ({
     target: 'es2020',
     minify: mode === 'production' ? 'terser' : 'esbuild',
     cssCodeSplit: true,
+    // Increase chunk size warning for vendor chunks
+    chunkSizeWarningLimit: 300,
     ...(mode === 'production' && {
       terserOptions: {
         compress: {

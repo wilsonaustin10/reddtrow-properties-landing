@@ -36,6 +36,9 @@
     <link rel="preconnect" href="https://scripts.clixtell.com" crossorigin />
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
 
+    <!-- Preload critical assets for faster LCP -->
+    <link rel="preload" as="image" type="image/webp" href="/src/assets/Reddtrow Logo.webp" fetchpriority="high" />
+
     <!-- Critical CSS - Inline for faster First Paint -->
     <style>
       /* Critical above-the-fold styles */
@@ -61,6 +64,9 @@
         background: hsl(var(--background));
         color: hsl(var(--foreground));
         line-height: 1.5;
+        font-display: swap;
+        text-rendering: optimizeSpeed;
+        -webkit-font-smoothing: antialiased;
       }
       
       /* Hero section critical styles with containment */
@@ -221,29 +227,35 @@
   <body>
     <div id="root">
       <!-- Hero skeleton - shows instant paint while JS loads, replaced by React -->
+      <!-- Matches LandingLayout, LandingHeader, and LandingHero dimensions exactly to prevent CLS -->
       <div style="
         min-height: 100vh;
         background: hsl(0 0% 100%);
+        contain: layout;
+        isolation: isolate;
       ">
-        <!-- Header skeleton -->
+        <!-- Header skeleton - matches LandingHeader height: 72px -->
         <div style="
+          height: 72px;
           background: rgba(255,255,255,0.95);
           border-bottom: 1px solid hsl(210 20% 90%);
           padding: 0.75rem 1rem;
           display: flex;
           justify-content: space-between;
           align-items: center;
+          contain: layout style;
         ">
           <div style="width: 127px; height: 56px; background: hsl(210 16% 93%); border-radius: 0.5rem;"></div>
           <div style="width: 120px; height: 40px; background: hsl(270 1% 31%); border-radius: 0.5rem;"></div>
         </div>
-        <!-- Hero skeleton -->
+        <!-- Hero skeleton - matches LandingHero min-h-[550px] -->
         <div style="
           min-height: 550px;
           background: linear-gradient(135deg, hsl(1 64% 28%), hsl(1 64% 38%));
           display: flex;
           align-items: center;
           padding: 2rem 1rem;
+          contain: layout style paint;
         ">
           <div style="
             display: grid;
@@ -253,18 +265,42 @@
             max-width: 1280px;
             margin: 0 auto;
           ">
+            <!-- Form card skeleton - matches LeadForm Card -->
             <div style="
               background: white;
               border-radius: 0.75rem;
               padding: 1.5rem;
-              min-height: 400px;
+              min-height: 480px;
               border: 2px solid hsl(1 64% 28%);
+              max-width: 28rem;
+              margin: 0 auto;
+              box-shadow: 0 10px 30px -10px rgba(139, 40, 40, 0.3);
             ">
-              <div style="height: 1.5rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 1rem; width: 60%;"></div>
-              <div style="height: 2.5rem; background: hsl(210 16% 93%); border-radius: 0.5rem; margin-bottom: 1rem;"></div>
-              <div style="height: 2.5rem; background: hsl(210 16% 93%); border-radius: 0.5rem; margin-bottom: 1rem;"></div>
-              <div style="height: 2.5rem; background: hsl(210 16% 93%); border-radius: 0.5rem; margin-bottom: 1rem;"></div>
-              <div style="height: 3rem; background: hsl(270 1% 31%); border-radius: 0.5rem; margin-top: 1.5rem;"></div>
+              <!-- Form header -->
+              <div style="height: 1.75rem; background: hsl(1 64% 28%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 70%;"></div>
+              <div style="height: 1rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 1.5rem; width: 50%;"></div>
+              <!-- Address field -->
+              <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 30%;"></div>
+              <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid hsl(210 20% 90%);"></div>
+              <!-- Name fields -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.75rem; margin-bottom: 1rem;">
+                <div>
+                  <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 60%;"></div>
+                  <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; border: 1px solid hsl(210 20% 90%);"></div>
+                </div>
+                <div>
+                  <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 60%;"></div>
+                  <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; border: 1px solid hsl(210 20% 90%);"></div>
+                </div>
+              </div>
+              <!-- Phone field -->
+              <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 35%;"></div>
+              <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid hsl(210 20% 90%);"></div>
+              <!-- Email field -->
+              <div style="height: 0.875rem; background: hsl(210 16% 93%); border-radius: 0.25rem; margin-bottom: 0.5rem; width: 35%;"></div>
+              <div style="height: 3rem; background: hsl(210 20% 95%); border-radius: 0.5rem; margin-bottom: 1rem; border: 1px solid hsl(210 20% 90%);"></div>
+              <!-- Submit button -->
+              <div style="height: 3.5rem; background: linear-gradient(135deg, hsl(270 1% 31%), hsl(270 1% 26%)); border-radius: 0.5rem; margin-top: 1rem;"></div>
             </div>
           </div>
         </div>

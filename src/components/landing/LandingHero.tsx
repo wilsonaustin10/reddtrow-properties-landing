@@ -11,7 +11,13 @@ interface LandingHeroProps {
 
 const LandingHero = ({ h1, h2, bullets, badge, children }: LandingHeroProps) => {
   return (
-    <section className="hero-section relative min-h-[500px] md:min-h-[550px] lg:min-h-[600px] flex items-center py-8 md:py-12 text-white">
+    <section
+      className="hero-section relative min-h-[550px] md:min-h-[600px] lg:min-h-[650px] flex items-center py-8 md:py-12 text-white"
+      style={{
+        contain: 'layout style paint',
+        containIntrinsicBlockSize: '600px',
+      }}
+    >
       <div className="container mx-auto px-4 relative z-10">
         <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
           {/* Content Side */}
