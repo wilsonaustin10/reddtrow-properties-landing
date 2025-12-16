@@ -36,9 +36,6 @@
     <link rel="preconnect" href="https://scripts.clixtell.com" crossorigin />
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin />
 
-    <!-- Preload critical assets for faster LCP -->
-    <link rel="preload" as="image" type="image/webp" href="/src/assets/Reddtrow Logo.webp" fetchpriority="high" />
-
     <!-- Critical CSS - Inline for faster First Paint -->
     <style>
       /* Critical above-the-fold styles */
@@ -64,9 +61,15 @@
         background: hsl(var(--background));
         color: hsl(var(--foreground));
         line-height: 1.5;
-        font-display: swap;
         text-rendering: optimizeSpeed;
         -webkit-font-smoothing: antialiased;
+      }
+
+      /* Reserve space for mobile sticky bar to prevent CLS */
+      @media (max-width: 767px) {
+        body {
+          padding-bottom: 56px; /* Height of mobile sticky bar */
+        }
       }
       
       /* Hero section critical styles with containment */
@@ -305,6 +308,28 @@
           </div>
         </div>
       </div>
+      <!-- Mobile sticky bar skeleton - matches LandingHeader mobile bar -->
+      <div id="mobile-bar-skeleton" style="
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 56px;
+        background: hsl(270 1% 31%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 50;
+        box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+      ">
+        <div style="width: 24px; height: 24px; background: rgba(255,255,255,0.3); border-radius: 50%; margin-right: 12px;"></div>
+        <div style="width: 140px; height: 20px; background: rgba(255,255,255,0.3); border-radius: 4px;"></div>
+      </div>
+      <style>
+        @media (min-width: 768px) {
+          #mobile-bar-skeleton { display: none !important; }
+        }
+      </style>
     </div>
     <script type="module" src="/src/main.tsx"></script>
     
