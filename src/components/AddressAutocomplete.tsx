@@ -123,16 +123,20 @@ const AddressAutocomplete = ({
           </div>
         )}
       </div>
-      {value && !isAddressSelected && (
-        <p className="text-xs text-destructive mt-1">
-          Please select a complete address from the dropdown suggestions
-        </p>
-      )}
-      {isAddressSelected && (
-        <p className="text-xs text-green-600 mt-1">
-          ✓ Valid address selected
-        </p>
-      )}
+      {/* Always reserve space for validation message to prevent CLS */}
+      <p
+        className={`text-xs mt-1 min-h-[1rem] ${
+          value && !isAddressSelected ? 'text-destructive' :
+          isAddressSelected ? 'text-green-600' : ''
+        }`}
+        style={{ visibility: value ? 'visible' : 'hidden' }}
+      >
+        {value && !isAddressSelected
+          ? 'Please select a complete address from the dropdown suggestions'
+          : isAddressSelected
+            ? '✓ Valid address selected'
+            : '\u00A0'}
+      </p>
     </div>
   );
 };
