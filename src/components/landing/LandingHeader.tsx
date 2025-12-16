@@ -1,6 +1,6 @@
 import { Phone } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "@/assets/reddtrow-emblem.webp";
+import logo from "@/assets/Reddtrow Logo.webp";
 
 interface LandingHeaderProps {
   phoneNumber?: string;
@@ -28,7 +28,7 @@ const LandingHeader = ({
         <div className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="hover:opacity-80 transition-opacity">
-            <img src={logo} alt="Reddtrow Properties" className="h-12 md:h-14 w-auto" fetchPriority="high" decoding="async" width="45" height="56" />
+            <img src={logo} alt="Reddtrow Properties" className="h-12 md:h-14 w-auto" fetchPriority="high" decoding="async" width="127" height="56" />
           </Link>
 
           {/* Phone CTA */}
