@@ -1,19 +1,265 @@
 # Performance Optimization Plan
 ## Reddtrow Properties Landing Page
 
-**Analysis Date:** December 15, 2025
+**Analysis Date:** December 16, 2025 (Updated from Dec 15 PSI Report)
 **Target:** https://www.reddtrowhomebuyers.com
-**Goal:** Improve PageSpeed Insights scores for mobile and desktop without altering UI/UX
+**Current Score:** 66 (Mobile) | **Target:** 85+
+**Goal:** Fix CLS, optimize LCP, and improve overall PageSpeed scores
+
+---
+
+## PSI Report Summary (Dec 15, 2025)
+
+| Metric | Value | Status |
+|--------|-------|--------|
+| **Performance** | 66 | 🟠 Needs Improvement |
+| **CLS** | 0.608 | 🔴 Critical (target: <0.1) |
+| **LCP** | 2.3s | 🟠 Needs Improvement |
+| **TBT** | 240ms | 🟠 Needs Improvement |
+| **FCP** | 2.1s | 🟠 Needs Improvement |
+| **Speed Index** | 5.0s | 🔴 Poor |
 
 ---
 
 ## Executive Summary
 
-The primary performance bottleneck is **unoptimized images**. The site has good foundational optimizations (CSS containment, deferred scripts, code splitting) but images are significantly oversized for their display dimensions and lack modern optimization attributes.
+The PSI report reveals **three critical issues** beyond image optimization:
 
-**Estimated Impact:** Implementing these optimizations could improve mobile PageSpeed score by 20-40 points.
+1. **CLS of 0.608** - Layout shift from `<div class="min-h-screen bg-background">`
+2. **Non-composited `pulse-glow` animation** - Using `box-shadow` (not GPU-accelerated)
+3. **LCP render delay of 2,310ms** - JavaScript blocking the hero text render
+
+**Estimated Impact:** Fixing these issues should improve score from 66 to 85+.
 
 ---
+
+## PRIORITY 1: Fix CLS (0.608 → <0.1)
+
+### Root Cause
+The CLS culprit identified by Lighthouse is:
+```
+Element: <div class="min-h-screen bg-background">
+Layout shift score: 0.608
+```
+
+This is the root container in `LandingLayout.tsx`. Layout shifts occur because:
+1. **Font loading** causes text reflow
+2. **React hydration** changes element dimensions
+3. **No explicit dimensions** on critical layout containers
+
+### Solution 1.1: Add Explicit Hero Dimensions
+
+**File:** `src/components/landing/LandingHero.tsx` (Line 14)
+
+```diff
+- <section className="hero-section relative min-h-[50vh] flex items-center py-8 md:py-12 text-white">
++ <section className="hero-section relative min-h-[500px] md:min-h-[550px] lg:min-h-[600px] flex items-center py-8 md:py-12 text-white">
+```
+
+Rationale: Using fixed `min-h-[500px]` instead of viewport-relative `min-h-[50vh]` prevents layout shifts when viewport changes during load.
+
+### Solution 1.2: Add Layout Containment to Root
+
+**File:** `src/components/landing/LandingLayout.tsx` (Line 46)
+
+```diff
+- <div className="min-h-screen bg-background flex flex-col">
++ <div className="min-h-screen bg-background flex flex-col" style={{ contain: 'layout' }}>
+```
+
+### Solution 1.3: Add Font Display Swap
+
+Already present in `index.html` critical CSS. Verify Google Fonts also use `font-display: swap`.
+
+---
+
+## PRIORITY 2: Fix Non-Composited Animations
+
+### Root Cause
+PSI flagged 3 elements with non-composited animations:
+- "Get Cash Offer" button - `pulse-glow` animation using `box-shadow`
+- "Get My Cash Offer" button - `pulse-glow` animation using `box-shadow`
+
+`box-shadow` animations cannot be GPU-accelerated and cause:
+- Janky animations (60fps → ~30fps)
+- Additional layout shifts
+- Main thread blocking
+
+### Solution 2.1: Convert to Composited Animation
+
+**File:** `src/index.css` (Lines 151-168)
+
+**BEFORE:**
+```css
+.urgency-button {
+  background: linear-gradient(135deg, hsl(var(--urgency)), hsl(var(--urgency-hover)));
+  box-shadow: var(--urgency-glow);
+  animation: pulse-glow 2s infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: var(--urgency-glow); }
+  50% { box-shadow: 0 0 30px hsl(var(--urgency) / 0.6); }
+}
+```
+
+**AFTER (Option A - Scale animation, GPU-accelerated):**
+```css
+.urgency-button {
+  background: linear-gradient(135deg, hsl(var(--urgency)), hsl(var(--urgency-hover)));
+  box-shadow: var(--urgency-glow);
+  animation: pulse-scale 2s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes pulse-scale {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.03); }
+}
+```
+
+**AFTER (Option B - Opacity pseudo-element, GPU-accelerated):**
+```css
+.urgency-button {
+  background: linear-gradient(135deg, hsl(var(--urgency)), hsl(var(--urgency-hover)));
+  box-shadow: var(--urgency-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.urgency-button::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 30px hsl(var(--urgency) / 0.6);
+  opacity: 0;
+  animation: pulse-opacity 2s ease-in-out infinite;
+  pointer-events: none;
+  will-change: opacity;
+}
+
+@keyframes pulse-opacity {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+```
+
+**Recommendation:** Use Option A (scale) for simplicity and maximum compatibility.
+
+---
+
+## PRIORITY 3: Reduce LCP Render Delay (2,310ms)
+
+### Root Cause
+The LCP element is text in the hero:
+```html
+<p class="text-lg md:text-xl lg:text-2xl text-white/90 leading-relaxed">
+  Get a fair cash offer in 7 minutes or less...
+</p>
+```
+
+**LCP Breakdown:**
+- Time to First Byte: 0ms ✅
+- Element render delay: **2,310ms** 🔴
+
+This means JavaScript is blocking the render for 2.3 seconds.
+
+### Solution 3.1: Add Hero Skeleton in HTML
+
+**File:** `index.html` (Replace line 215)
+
+```html
+<div id="root">
+  <!-- Hero skeleton - prevents blank screen during JS load -->
+  <div class="hero-skeleton" style="
+    min-height: 600px;
+    background: linear-gradient(135deg, hsl(1 64% 28%), hsl(1 64% 38%));
+    display: flex;
+    align-items: center;
+    padding: 2rem;
+  ">
+    <div style="
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+      width: 100%;
+      max-width: 1280px;
+      margin: 0 auto;
+    ">
+      <div style="color: white; opacity: 0.3;">
+        <div style="height: 3rem; background: currentColor; border-radius: 0.5rem; margin-bottom: 1rem; width: 80%;"></div>
+        <div style="height: 1.5rem; background: currentColor; border-radius: 0.25rem; margin-bottom: 0.5rem; width: 60%;"></div>
+        <div style="height: 1.5rem; background: currentColor; border-radius: 0.25rem; width: 70%;"></div>
+      </div>
+      <div style="
+        background: white;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        min-height: 400px;
+        opacity: 0.9;
+      "></div>
+    </div>
+  </div>
+</div>
+```
+
+### Solution 3.2: Lazy Load Non-Critical Routes
+
+**File:** `src/App.tsx`
+
+```tsx
+import { lazy, Suspense } from 'react';
+
+// Eager load: Home page
+import Index from "./pages/Index";
+
+// Lazy load: All other pages
+const NotFound = lazy(() => import('./pages/NotFound'));
+const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'));
+const TermsConditions = lazy(() => import('./pages/TermsConditions'));
+const About = lazy(() => import('./pages/About'));
+const ThankYou = lazy(() => import('./pages/ThankYou'));
+const Testimonials = lazy(() => import('./pages/Testimonials'));
+// ... etc
+```
+
+### Solution 3.3: Consider SSG/Prerendering
+
+For maximum LCP improvement, consider:
+- Vite plugin: `vite-plugin-ssr` or `vite-plugin-prerender`
+- Prerender the home page to static HTML
+
+---
+
+## PRIORITY 4: Third-Party Script Impact
+
+### Current Impact
+| Script | Size | Main Thread |
+|--------|------|-------------|
+| Google Tag Manager | 365 KiB | 300ms |
+| Clixtell track.js | 33 KiB | 242ms |
+| Google CDN | 24 KiB | 22ms |
+
+**Total: 422 KiB, 564ms main thread time**
+
+### Current Mitigation (Already Implemented)
+GTM is deferred by 3 seconds - good!
+
+### Additional Optimization: Defer Clixtell Further
+
+If Clixtell loads via GTM, configure trigger to "First User Interaction" instead of page load.
+
+### Future Consideration: Partytown
+
+Move third-party scripts to web worker:
+```bash
+npm install @builder.io/partytown
+```
+
+---
+
+## PRIORITY 5: Image Optimization (Previous Analysis)
 
 ## Root Cause Analysis
 
@@ -299,25 +545,55 @@ Add to `index.html` `<head>`:
 
 ## Implementation Checklist
 
-### Manual Actions Required (Priority Order)
+### Sprint 1: Critical CLS + Animation Fixes (Impact: +15-20 points)
 
-- [ ] **1. Optimize BBB logo** (140KB → ~10KB) - HIGHEST IMPACT
-- [ ] **2. Create optimized favicon set** (104KB → ~5KB)
-- [ ] **3. Optimize Reddtrow emblem** (53KB → ~12KB)
-- [ ] **4. Optimize Reddtrow logo** (17KB → ~5KB)
-- [ ] **5. (Optional) Convert Sandra headshot to WebP**
+- [ ] **1.1** Fix hero section dimensions in `LandingHero.tsx` (min-h-[500px])
+- [ ] **1.2** Add layout containment to `LandingLayout.tsx`
+- [ ] **2.1** Convert `pulse-glow` to `pulse-scale` animation in `index.css`
+- [ ] **2.2** Remove `will-change: auto` from hero pseudo-element
 
-### Code Changes (Can Be Automated)
+### Sprint 2: LCP + Image Optimization (Impact: +10-15 points)
 
-- [ ] Add `loading`, `decoding`, `width`, `height` attributes to all images
-- [ ] Update favicon references in `index.html`
+- [ ] **3.1** Add hero skeleton to `index.html` for instant paint
+- [ ] **3.2** Convert `reddtrow-logo.png` to WebP (17KB → ~5KB)
+- [ ] **3.3** Add lazy loading to all landing page routes in `App.tsx`
+- [ ] **4.1** Verify all images have explicit `width` and `height` attributes
+
+### Sprint 3: Third-Party + Advanced (Impact: +3-5 points)
+
+- [ ] **5.1** Configure Clixtell to load on user interaction (via GTM)
+- [ ] **5.2** Add preconnect hints for third-party domains
+- [ ] **5.3** Consider Partytown for analytics scripts
+
+### Previous Image Optimization Tasks
+
+- [ ] Optimize BBB logo (140KB → ~10KB)
+- [ ] Optimize Reddtrow emblem (53KB → ~12KB)
+- [ ] Create optimized favicon set (104KB → ~5KB)
 - [ ] Delete unused assets (hero-house.jpg, team-photo.jpg, logo.png)
-- [ ] (Optional) Install vite-plugin-image-optimizer
-- [ ] (Optional) Create OptimizedImage component
 
 ---
 
 ## Expected Results
+
+### Performance Score Projection
+
+| Sprint | Changes | Est. Score | Delta |
+|--------|---------|------------|-------|
+| Current | - | 66 | - |
+| Sprint 1 | CLS + Animation fixes | 80-82 | +14-16 |
+| Sprint 2 | LCP + Images | 85-88 | +5-6 |
+| Sprint 3 | Third-party optimizations | 88-92 | +3-4 |
+
+### Core Web Vitals Targets
+
+| Metric | Current | Target | Change |
+|--------|---------|--------|--------|
+| **CLS** | 0.608 | <0.1 | -0.5+ |
+| **LCP** | 2.3s | <2.0s | -0.3s |
+| **TBT** | 240ms | <150ms | -90ms |
+| **FCP** | 2.1s | <1.8s | -0.3s |
+| **Speed Index** | 5.0s | <3.5s | -1.5s |
 
 ### File Size Reductions
 
@@ -329,15 +605,6 @@ Add to `index.html` `<head>`:
 | reddtrow-logo | 17KB | ~5KB | **12KB** |
 | Unused assets removed | 947KB | 0KB | **947KB** |
 | **Total** | **1.26MB** | **~32KB** | **~1.23MB** |
-
-### PageSpeed Impact Estimates
-
-| Metric | Current (Est.) | After Optimization |
-|--------|----------------|-------------------|
-| LCP (Largest Contentful Paint) | Poor/Needs Improvement | Good |
-| CLS (Cumulative Layout Shift) | May have issues | Improved (with width/height) |
-| Total Blocking Time | - | No change |
-| First Contentful Paint | - | Slight improvement |
 
 ---
 
