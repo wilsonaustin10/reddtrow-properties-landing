@@ -188,7 +188,13 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-body);
-    font-display: swap;
+  }
+
+  /* Reserve space for mobile sticky bar to prevent CLS */
+  @media (max-width: 767px) {
+    body {
+      padding-bottom: 56px;
+    }
   }
   
   h1, h2, h3, h4, h5, h6 {
