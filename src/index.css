@@ -132,7 +132,6 @@
     bottom: 0;
     background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.5" opacity="0.1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
     pointer-events: none;
-    will-change: auto;
   }
   
   .trust-card {
@@ -153,18 +152,18 @@
     color: hsl(var(--urgency-foreground));
     border: none;
     box-shadow: var(--urgency-glow);
-    transition: all 0.3s ease;
-    animation: pulse-glow 2s infinite;
+    transition: box-shadow 0.3s ease;
+    animation: pulse-scale 2s ease-in-out infinite;
+    will-change: transform;
   }
-  
+
   .urgency-button:hover {
-    transform: translateY(-1px);
     box-shadow: 0 6px 20px hsl(var(--urgency) / 0.4);
   }
-  
-  @keyframes pulse-glow {
-    0%, 100% { box-shadow: var(--urgency-glow); }
-    50% { box-shadow: 0 0 30px hsl(var(--urgency) / 0.6); }
+
+  @keyframes pulse-scale {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.03); }
   }
   
   .success-badge {

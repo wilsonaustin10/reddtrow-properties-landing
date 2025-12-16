@@ -1,6 +1,6 @@
 import { Phone } from "lucide-react";
 import { Link } from "react-router-dom";
-import logo from "@/assets/reddtrow-logo.png";
+import logo from "@/assets/Reddtrow Logo.webp";
 
 interface LandingHeaderProps {
   phoneNumber?: string;

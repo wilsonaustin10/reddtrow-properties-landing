@@ -43,7 +43,7 @@ const LandingLayout = ({ meta, children }: LandingLayoutProps) => {
   }, [meta.title, meta.description]);
 
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col" style={{ contain: 'layout' }}>
       <LandingHeader />
       <main className="flex-1">
         {children}
