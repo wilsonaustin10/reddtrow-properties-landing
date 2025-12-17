@@ -6,7 +6,7 @@ export const sellAsIsContent = {
     description: 'Sell your house as-is without repairs, cleaning, or hassle. Fair cash offer, close on your timeline. Get started today.',
   },
   hero: {
-    h1: 'Sell Your House As-Is: No Repairs, No Cleaning, No Stress',
+    h1: 'Sell Your House As-Is. No Repairs, No Cleaning, No Stress',
     h2: 'Leave the Keys, Leave the Mess, Leave the Worry Behind',
     badge: 'As-Is Specialists',
     bullets: [

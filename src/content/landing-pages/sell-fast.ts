@@ -6,7 +6,7 @@ export const sellFastContent = {
     description: 'Need to sell your house fast? Get a fair cash offer in 24 hours and close in as little as 7 days. No repairs, no fees.',
   },
   hero: {
-    h1: 'Sell Your House Fast: Cash Offer in 24 Hours',
+    h1: 'Sell Your House Fast. Cash Offer in 24 Hours',
     h2: 'No Repairs. No Showings. No Waiting. Close in 7 Days.',
     badge: '#1 Fast Home Buyers',
     bullets: [

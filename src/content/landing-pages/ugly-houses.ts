@@ -6,7 +6,7 @@ export const uglyHousesContent = {
     description: 'We specialize in buying ugly, damaged & outdated homes. No repairs, no cleaning. Get a fair cash offer today.',
   },
   hero: {
-    h1: 'We Buy Ugly Houses: No Repairs Needed, Ever',
+    h1: 'We Buy Ugly Houses. No Repairs Needed, Ever',
     h2: 'Fire Damage? Foundation Issues? Hoarder House? We Don\'t Care.',
     badge: 'Any Condition Accepted',
     bullets: [
