@@ -14,9 +14,6 @@ interface ImportMetaEnv {
   // Analytics Configuration
   readonly VITE_GOOGLE_TAG_ID?: string
   readonly VITE_GOOGLE_CONVERSION_LABEL?: string
-  
-  // Google Places API Configuration
-  readonly VITE_GOOGLE_PLACES_API_KEY?: string
 }
 
 interface ImportMeta {

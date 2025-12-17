@@ -5,8 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import AddressAutocomplete from "@/components/AddressAutocomplete";
-import { Phone, Loader2, CheckCircle } from "lucide-react";
+import { MapPin, Phone, Loader2, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
 // Error message component that reserves space to prevent CLS
@@ -70,7 +69,6 @@ const LeadForm = ({
   buttonText = "Get My Cash Offer",
   compact = false
 }: LeadFormProps) => {
-  const [isAddressSelected, setIsAddressSelected] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState<LeadFormData>({
@@ -185,7 +183,7 @@ const LeadForm = ({
         if (!value.trim()) return 'Phone number is required';
         return validatePhone(value) ? '' : 'Please enter a valid phone number';
       case 'address':
-        return isAddressSelected ? '' : 'Please select an address from the dropdown';
+        return value.trim() ? '' : 'Property address is required';
       default:
         return '';
     }
@@ -218,7 +216,7 @@ const LeadForm = ({
     return (
       formData.firstName.trim() !== '' &&
       formData.lastName.trim() !== '' &&
-      isAddressSelected &&
+      formData.address.trim() !== '' &&
       validateEmail(formData.email) &&
       validatePhone(formData.phone) &&
       formData.smsConsent
@@ -313,15 +311,23 @@ const LeadForm = ({
 
       <CardContent className={compact ? 'pb-4' : 'pb-6'}>
         <form onSubmit={handleSubmit} className="space-y-4">
-          <AddressAutocomplete
-            value={formData.address}
-            onChange={(address) => handleInputChange('address', address)}
-            onAddressSelect={(isValid) => setIsAddressSelected(isValid)}
-            placeholder="Enter your property address"
-            required
-            className="h-12"
-            isAddressSelected={isAddressSelected}
-          />
+          <div className="space-y-1">
+            <Label htmlFor="address" className="flex items-center space-x-1 text-foreground text-sm">
+              <MapPin className="w-4 h-4" />
+              <span>Property Address *</span>
+            </Label>
+            <Input
+              id="address"
+              type="text"
+              placeholder="123 Main St, City, State, ZIP"
+              value={formData.address}
+              onChange={(e) => handleInputChange('address', e.target.value)}
+              onBlur={() => handleBlur('address')}
+              required
+              className={`h-12 ${errors.address ? 'border-destructive' : ''}`}
+            />
+            <FormError message={errors.address} />
+          </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div className="space-y-1">
