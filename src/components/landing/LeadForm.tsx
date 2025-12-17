@@ -70,7 +70,6 @@ const LeadForm = ({
   buttonText = "Get My Cash Offer",
   compact = false
 }: LeadFormProps) => {
-  const [isAddressSelected, setIsAddressSelected] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [formData, setFormData] = useState<LeadFormData>({
@@ -185,7 +184,7 @@ const LeadForm = ({
         if (!value.trim()) return 'Phone number is required';
         return validatePhone(value) ? '' : 'Please enter a valid phone number';
       case 'address':
-        return isAddressSelected ? '' : 'Please select an address from the dropdown';
+        return value.trim() ? '' : 'Address is required';
       default:
         return '';
     }
@@ -218,7 +217,7 @@ const LeadForm = ({
     return (
       formData.firstName.trim() !== '' &&
       formData.lastName.trim() !== '' &&
-      isAddressSelected &&
+      formData.address.trim() !== '' &&
       validateEmail(formData.email) &&
       validatePhone(formData.phone) &&
       formData.smsConsent
@@ -316,11 +315,9 @@ const LeadForm = ({
           <AddressAutocomplete
             value={formData.address}
             onChange={(address) => handleInputChange('address', address)}
-            onAddressSelect={(isValid) => setIsAddressSelected(isValid)}
             placeholder="Enter your property address"
             required
             className="h-12"
-            isAddressSelected={isAddressSelected}
           />
 
           <div className="grid grid-cols-2 gap-3">

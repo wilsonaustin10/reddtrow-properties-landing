@@ -1,8 +1,6 @@
-import { useRef, useState, useCallback } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { MapPin, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { MapPin } from 'lucide-react';
 
 interface AddressAutocompleteProps {
   value: string;
@@ -14,129 +12,38 @@ interface AddressAutocompleteProps {
   isAddressSelected?: boolean;
 }
 
-const AddressAutocomplete = ({ 
-  value, 
-  onChange, 
+const AddressAutocomplete = ({
+  value,
+  onChange,
   onAddressSelect,
   placeholder = "123 Main St, City, State, ZIP",
   required = false,
   className = "h-12",
-  isAddressSelected = false
 }: AddressAutocompleteProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const autocompleteRef = useRef<google.maps.places.Autocomplete | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
-  const [isInitialized, setIsInitialized] = useState(false);
-  const { toast } = useToast();
-
-  const loadGooglePlacesService = useCallback(async () => {
-    const { googlePlacesService } = await import('@/utils/GooglePlacesService');
-    return googlePlacesService;
-  }, []);
-
-  const initializeAutocomplete = useCallback(async () => {
-    if (!inputRef.current || isInitialized || isLoading) return;
-
-    const apiKey = import.meta.env.VITE_GOOGLE_PLACES_API_KEY;
-    if (!apiKey) {
-      console.warn('Google Places API key not found. Set VITE_GOOGLE_PLACES_API_KEY in your environment variables.');
-      return;
-    }
-
-    setIsLoading(true);
-    
-    try {
-      const googlePlacesService = await loadGooglePlacesService();
-      await googlePlacesService.loadGoogleMapsScript(apiKey);
-      
-      autocompleteRef.current = googlePlacesService.initializeAutocomplete(
-        inputRef.current,
-        (place: google.maps.places.PlaceResult) => {
-          if (place.formatted_address) {
-            onChange(place.formatted_address);
-            onAddressSelect?.(true);
-          }
-        }
-      );
-      
-      setIsInitialized(true);
-    } catch (error) {
-      console.error('Failed to initialize Google Places autocomplete:', error);
-      toast({
-        title: "Error",
-        description: "Failed to load Google Places API. Please check your API key configuration.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsLoading(false);
-    }
-  }, [isInitialized, isLoading, loadGooglePlacesService, onChange, toast]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onChange(e.target.value);
-    // Mark address as not selected when user manually types
-    onAddressSelect?.(false);
-  };
-
-  const handleInputFocus = () => {
-    if (!isInitialized && !isLoading) {
-      initializeAutocomplete();
-    }
+    const newValue = e.target.value;
+    onChange(newValue);
+    // Mark address as valid when there's content
+    onAddressSelect?.(newValue.trim().length > 0);
   };
 
   return (
     <div className="space-y-2">
       <Label htmlFor="address" className="flex items-center space-x-1 text-foreground">
-        {isLoading ? (
-          <Loader2 className="w-4 h-4 animate-spin" />
-        ) : (
-          <MapPin className="w-4 h-4" />
-        )}
+        <MapPin className="w-4 h-4" />
         <span>Property Address {required && '*'}</span>
       </Label>
 
-      <div className="relative">
-        <Input
-          ref={inputRef}
-          id="address"
-          type="text"
-          placeholder={placeholder}
-          value={value}
-          onChange={handleInputChange}
-          onFocus={handleInputFocus}
-          required={required}
-          className={`${className} ${value && !isAddressSelected ? 'border-destructive' : ''} ${isAddressSelected ? 'border-green-500' : ''}`}
-        />
-        {isLoading && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
-          </div>
-        )}
-        {!isLoading && value && isAddressSelected && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <CheckCircle2 className="w-4 h-4 text-green-500" />
-          </div>
-        )}
-        {!isLoading && value && !isAddressSelected && (
-          <div className="absolute right-3 top-1/2 transform -translate-y-1/2">
-            <AlertCircle className="w-4 h-4 text-destructive" />
-          </div>
-        )}
-      </div>
-      {/* Always reserve space for validation message to prevent CLS */}
-      <p
-        className={`text-xs mt-1 min-h-[1rem] ${
-          value && !isAddressSelected ? 'text-destructive' :
-          isAddressSelected ? 'text-green-600' : ''
-        }`}
-        style={{ visibility: value ? 'visible' : 'hidden' }}
-      >
-        {value && !isAddressSelected
-          ? 'Please select a complete address from the dropdown suggestions'
-          : isAddressSelected
-            ? '✓ Valid address selected'
-            : '\u00A0'}
-      </p>
+      <Input
+        id="address"
+        type="text"
+        placeholder={placeholder}
+        value={value}
+        onChange={handleInputChange}
+        required={required}
+        className={className}
+      />
     </div>
   );
 };

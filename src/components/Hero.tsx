@@ -50,7 +50,6 @@ interface LeadFormData extends TrackingFields {
 
 const Hero = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isAddressSelected, setIsAddressSelected] = useState(false);
   const [formData, setFormData] = useState<LeadFormData>({
     address: '',
     phone: '',
@@ -213,7 +212,7 @@ const Hero = () => {
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return formData.firstName.trim() && formData.lastName.trim() && isAddressSelected && formData.address.trim() && formData.phone.trim() && formData.email.trim() && formData.smsConsent;
+        return formData.firstName.trim() && formData.lastName.trim() && formData.address.trim() && formData.phone.trim() && formData.email.trim() && formData.smsConsent;
       case 2:
         return formData.isListed !== '' && formData.condition && formData.timeline && formData.askingPrice.trim();
       default:
@@ -256,11 +255,9 @@ const Hero = () => {
             <AddressAutocomplete
               value={formData.address}
               onChange={(address) => handleInputChange('address', address)}
-              onAddressSelect={(isValid) => setIsAddressSelected(isValid)}
-              placeholder="Start typing your address..."
+              placeholder="Enter your property address"
               required
               className="h-12"
-              isAddressSelected={isAddressSelected}
             />
             <div className="space-y-2">
               <Label htmlFor="phone" className="flex items-center space-x-1 text-foreground">
