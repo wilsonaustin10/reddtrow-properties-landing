@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
-import AddressAutocomplete from "@/components/AddressAutocomplete";
 import { CheckCircle2, Clock, DollarSign, MapPin, Phone, ArrowRight, ArrowLeft, CheckCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -50,7 +49,6 @@ interface LeadFormData extends TrackingFields {
 
 const Hero = () => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isAddressSelected, setIsAddressSelected] = useState(false);
   const [formData, setFormData] = useState<LeadFormData>({
     address: '',
     phone: '',
@@ -213,7 +211,7 @@ const Hero = () => {
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return formData.firstName.trim() && formData.lastName.trim() && isAddressSelected && formData.address.trim() && formData.phone.trim() && formData.email.trim() && formData.smsConsent;
+        return formData.firstName.trim() && formData.lastName.trim() && formData.address.trim() && formData.phone.trim() && formData.email.trim() && formData.smsConsent;
       case 2:
         return formData.isListed !== '' && formData.condition && formData.timeline && formData.askingPrice.trim();
       default:
@@ -253,15 +251,21 @@ const Hero = () => {
                 />
               </div>
             </div>
-            <AddressAutocomplete
-              value={formData.address}
-              onChange={(address) => handleInputChange('address', address)}
-              onAddressSelect={(isValid) => setIsAddressSelected(isValid)}
-              placeholder="Start typing your address..."
-              required
-              className="h-12"
-              isAddressSelected={isAddressSelected}
-            />
+            <div className="space-y-2">
+              <Label htmlFor="address" className="flex items-center space-x-1 text-foreground">
+                <MapPin className="w-4 h-4" />
+                <span>Property Address *</span>
+              </Label>
+              <Input
+                id="address"
+                type="text"
+                placeholder="123 Main St, City, State, ZIP"
+                value={formData.address}
+                onChange={(e) => handleInputChange('address', e.target.value)}
+                required
+                className="h-12"
+              />
+            </div>
             <div className="space-y-2">
               <Label htmlFor="phone" className="flex items-center space-x-1 text-foreground">
                 <Phone className="w-4 h-4" />
