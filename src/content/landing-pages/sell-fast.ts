@@ -6,7 +6,7 @@ export const sellFastContent = {
     description: 'Need to sell your house fast? Get a fair cash offer in 24 hours and close in as little as 7 days. No repairs, no fees.',
   },
   hero: {
-    h1: 'Sell Your House Fast — Cash Offer in 24 Hours',
+    h1: 'Sell Your House Fast: Cash Offer in 24 Hours',
     h2: 'No Repairs. No Showings. No Waiting. Close in 7 Days.',
     badge: '#1 Fast Home Buyers',
     bullets: [
@@ -30,7 +30,7 @@ export const sellFastContent = {
     { step: 3, title: 'Close & Get Paid', description: 'Accept our offer and choose your closing date. Get cash in as little as 7 days.' },
   ],
   faqs: [
-    { q: 'How fast can you really close?', a: 'Our fastest closing was 5 days. On average, we close in 14 days. But we work around your timeline — if you need 30 or 60 days, that\'s fine too.' },
+    { q: 'How fast can you really close?', a: 'Our fastest closing was 5 days. On average, we close in 14 days. But we work around your timeline. If you need 30 or 60 days, that\'s fine too.' },
     { q: 'What\'s your fee?', a: 'Zero. We don\'t charge any fees or commissions. We even pay normal closing costs. The offer we make is what you get.' },
     { q: 'How much will you offer for my house?', a: 'We make fair offers based on your home\'s condition, location, and current market. While you might net slightly less than a perfect traditional sale, you save on repairs, commissions, and months of waiting.' },
     { q: 'Do you need to see my house?', a: 'We can make an initial offer based on info you provide. If you accept, we\'ll schedule one quick visit to confirm details before closing.' },

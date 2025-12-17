@@ -10,7 +10,7 @@ export const cashBuyersContent = {
     h2: 'No Banks. No Delays. No Contingencies. Just Cash.',
     badge: 'Verified Cash Buyers',
     bullets: [
-      'Real cash offer — no financing contingencies',
+      'Real cash offer, no financing contingencies',
       'Close in 7-14 days (not 45-60)',
       'No appraisal required',
       'Funds guaranteed at closing',
@@ -35,7 +35,7 @@ export const cashBuyersContent = {
     { q: 'Will I get less money from a cash buyer?', a: 'You might get a slightly lower price than a perfect traditional sale, but you save on repairs, 6% commissions, and months of carrying costs. For many sellers, the net is similar or better.' },
     { q: 'How fast can you close?', a: 'Our fastest close was 5 days. Typically 7-14 days. But if you need 30 or 60 days, that works too.' },
     { q: 'Do I need to make any repairs?', a: 'No. We buy as-is. Whatever condition your house is in, that\'s what we buy.' },
-    { q: 'What happens at closing?', a: 'You sign a few documents, hand over the keys, and receive your cash — either by wire transfer or cashier\'s check. That simple.' },
+    { q: 'What happens at closing?', a: 'You sign a few documents, hand over the keys, and receive your cash, either by wire transfer or cashier\'s check. That simple.' },
   ],
   testimonials: [
     {

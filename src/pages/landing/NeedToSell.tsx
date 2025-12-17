@@ -58,8 +58,8 @@ const NeedToSellPage = () => {
               Don't see your situation?{' '}
               <Link to="#" className="text-primary font-semibold hover:underline">
                 Contact us anyway
-              </Link>{' '}
-              — we've seen it all.
+              </Link>
+              . We've seen it all.
             </p>
           </div>
         </div>

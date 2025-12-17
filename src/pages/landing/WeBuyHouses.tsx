@@ -82,7 +82,7 @@ const WeBuyHousesPage = () => {
       />
 
       <FinalCTA
-        headline="We Buy Houses — Including Yours"
+        headline="We Buy Houses, Including Yours"
         subheadline="Get your fair cash offer today. No obligation, no pressure."
       >
         <LeadForm

@@ -56,7 +56,7 @@ const ForeclosurePage = () => {
       />
 
       <FinalCTA
-        headline="Don't Wait — Time Is Critical"
+        headline="Don't Wait. Time Is Critical"
         subheadline="The sooner you act, the more options you have. Get your cash offer today."
       >
         <LeadForm

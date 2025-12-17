@@ -40,7 +40,7 @@ const SellAsIsPage = () => {
               What You Can Leave Behind
             </h2>
             <p className="text-lg text-muted-foreground">
-              Don't worry about any of this — we'll take care of it
+              Don't worry about any of this. We'll take care of it
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl mx-auto">
