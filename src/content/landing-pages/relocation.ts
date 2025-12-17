@@ -13,7 +13,7 @@ export const relocationContent = {
       'Close before your move date',
       'No repairs or showings while you\'re packing',
       'Cash offer means no buyer financing delays',
-      'We handle everything — you focus on moving',
+      'We handle everything. You focus on moving',
     ],
   },
   benefits: [
@@ -26,7 +26,7 @@ export const relocationContent = {
   ],
   process: [
     { step: 1, title: 'Tell Us About Your Timeline', description: 'Let us know when you need to move and we\'ll work around your schedule.' },
-    { step: 2, title: 'Get Your Cash Offer', description: 'We\'ll make a fair offer within 24 hours — no obligation to accept.' },
+    { step: 2, title: 'Get Your Cash Offer', description: 'We\'ll make a fair offer within 24 hours. No obligation to accept.' },
     { step: 3, title: 'Close & Move On', description: 'We handle all the paperwork. You focus on your exciting new chapter.' },
   ],
   faqs: [

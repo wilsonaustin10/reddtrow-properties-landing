@@ -7,7 +7,7 @@ export const foreclosureContent = {
   },
   hero: {
     h1: 'Facing Foreclosure? We Can Help You Sell Fast',
-    h2: 'Close Before the Bank Does — Get a Fair Cash Offer Today',
+    h2: 'Close Before the Bank Does. Get a Fair Cash Offer Today',
     badge: 'Foreclosure Specialists',
     bullets: [
       'Stop foreclosure proceedings',
@@ -30,9 +30,9 @@ export const foreclosureContent = {
     { step: 3, title: 'Close & Get Paid', description: 'We work with your bank to close fast. You walk away with cash.' },
   ],
   faqs: [
-    { q: 'Can you really close before my foreclosure date?', a: 'In most cases, yes. We\'ve closed in as little as 5 days when needed. The key is acting quickly — contact us as soon as possible so we have time to work with your lender.' },
+    { q: 'Can you really close before my foreclosure date?', a: 'In most cases, yes. We\'ve closed in as little as 5 days when needed. The key is acting quickly. Contact us as soon as possible so we have time to work with your lender.' },
     { q: 'Will I still owe money after the sale?', a: 'It depends on your situation and how much equity you have. In many cases, we can help you walk away clean with cash in hand. We\'ll explain all your options upfront with complete transparency.' },
-    { q: 'How much will I get for my house?', a: 'We make fair market offers based on your home\'s condition and the local market. Our goal is a win-win — you get out of a tough situation with cash, and we get a property to renovate.' },
+    { q: 'How much will I get for my house?', a: 'We make fair market offers based on your home\'s condition and the local market. Our goal is a win-win. You get out of a tough situation with cash, and we get a property to renovate.' },
     { q: 'What if I\'m already behind on payments?', a: 'That\'s completely okay. Many of our clients are behind on payments. We can often work with your lender to find a solution that works for everyone.' },
     { q: 'Is this process confidential?', a: 'Absolutely. We handle everything discreetly. Your neighbors won\'t know you\'re selling unless you tell them.' },
     { q: 'What if I have a second mortgage or liens?', a: 'We deal with complicated situations all the time. We can work with multiple lien holders to reach a resolution and get your house sold.' },

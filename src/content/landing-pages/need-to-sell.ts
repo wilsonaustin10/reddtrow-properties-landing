@@ -34,7 +34,7 @@ export const needToSellContent = {
     { q: 'Will I get a fair price?', a: 'Yes. We make competitive offers based on market data, comparable sales, and your home\'s condition. While you may net slightly less than a traditional sale, you save on repairs, commissions, and months of waiting.' },
     { q: 'What\'s the catch?', a: 'There\'s no catch. We\'re professional investors who buy houses to renovate and resell. You get speed and convenience; we get a fair deal on a property.' },
     { q: 'Do I need to clean or repair anything?', a: 'No. We buy houses as-is. Leave the mess, leave the repairs, leave whatever you don\'t want. We handle it all.' },
-    { q: 'What situations do you help with?', a: 'All of them. Foreclosure, divorce, inheritance, relocation, tired landlords, behind on payments, houses needing repairs — we\'ve seen it all and can help.' },
+    { q: 'What situations do you help with?', a: 'All of them. Foreclosure, divorce, inheritance, relocation, tired landlords, behind on payments, houses needing repairs. We\'ve seen it all and can help.' },
     { q: 'Are there any fees?', a: 'None. We don\'t charge commissions or fees. We even pay typical closing costs. The offer we make is what you get.' },
   ],
   testimonials: [

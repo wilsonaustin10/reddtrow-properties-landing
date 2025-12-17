@@ -11,7 +11,7 @@ export const companiesThatBuyHousesContent = {
     badge: 'Trusted Local Buyers',
     bullets: [
       'Local company, not a national call center',
-      'We buy direct — no middlemen',
+      'We buy direct, no middlemen',
       'Transparent pricing, no hidden fees',
       '100+ houses purchased in your area',
     ],
