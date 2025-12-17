@@ -6,7 +6,7 @@ export const weBuyHousesContent = {
     description: 'We buy houses in any condition for cash. Local buyers, fair offers, fast closing. No fees, no repairs. Get your free offer now.',
   },
   hero: {
-    h1: 'We Buy Houses: Any Condition, Any Situation',
+    h1: 'We Buy Houses. Any Condition, Any Situation',
     h2: 'Local Cash Home Buyers Ready to Make You a Fair Offer',
     badge: 'We Buy Houses',
     bullets: [
