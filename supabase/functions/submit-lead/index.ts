@@ -80,7 +80,7 @@ const attributionSchema = z.object({
 
 const leadSchema = z.object({
   firstName: z.string().trim().min(1, "First name is required").max(100, "First name too long"),
-  lastName: z.string().trim().min(1, "Last name is required").max(100, "Last name too long"),
+  lastName: z.string().trim().max(100, "Last name too long").optional().default(''),
   email: z.string().email("Invalid email format").max(255, "Email too long"),
   phone: z.string().trim().min(10, "Phone number too short").max(20, "Phone number too long"),
   address: z.string().trim().min(5, "Address too short").max(500, "Address too long"),
