@@ -20,10 +20,6 @@ const configSchema = z.object({
     name: z.string().min(1, 'Client name is required'),
     environment: z.enum(['development', 'staging', 'production']).default('production'),
     domain: z.string().optional()
-  }),
-  analytics: z.object({
-    googleTagId: z.string().optional(),
-    conversionLabel: z.string().optional()
   })
 });
 
@@ -44,10 +40,6 @@ function getConfig(): ClientConfig {
       name: import.meta.env.VITE_CLIENT_NAME || 'default',
       environment: (import.meta.env.VITE_ENVIRONMENT || 'production') as 'development' | 'staging' | 'production',
       domain: import.meta.env.VITE_CUSTOM_DOMAIN
-    },
-    analytics: {
-      googleTagId: import.meta.env.VITE_GOOGLE_TAG_ID,
-      conversionLabel: import.meta.env.VITE_GOOGLE_CONVERSION_LABEL
     }
   };
 
@@ -70,7 +62,6 @@ export const clientConfig = getConfig();
 // Helper functions for common config access
 export const getSupabaseConfig = () => clientConfig.supabase;
 export const getClientInfo = () => clientConfig.client;
-export const getAnalyticsConfig = () => clientConfig.analytics;
 
 // Log configuration in development (without sensitive data)
 if (import.meta.env.DEV) {
@@ -80,10 +71,6 @@ if (import.meta.env.DEV) {
       url: clientConfig.supabase.url,
       projectId: clientConfig.supabase.projectId,
       anonKey: `${clientConfig.supabase.anonKey.substring(0, 10)}...`
-    },
-    analytics: {
-      hasGoogleTag: !!clientConfig.analytics.googleTagId,
-      hasConversionLabel: !!clientConfig.analytics.conversionLabel
     }
   });
 }
