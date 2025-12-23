@@ -78,7 +78,8 @@ const leadSchema = z.object({
   timeline: z.enum(['asap', '30days', '60days', '90days', '90plus']).optional(),
   askingPrice: z.string().trim().max(50, "Asking price too long").optional(),
   smsConsent: z.boolean().optional(),
-  website: z.string().optional() // Honeypot field - should be empty
+  website: z.string().optional(), // Honeypot field - should be empty
+  adGroup: z.string().trim().max(100, "Ad group too long").optional() // Landing page ad group
 }).merge(attributionSchema);
 
 interface LeadData extends AttributionData {
@@ -93,6 +94,7 @@ interface LeadData extends AttributionData {
   lastName: string;
   email: string;
   website?: string; // Honeypot field
+  adGroup?: string; // Landing page ad group
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -157,7 +159,7 @@ const handler = async (req: Request): Promise<Response> => {
     console.log('Honeypot check passed (field empty)');
     console.log('Received validated lead data:', { ...leadData, phone: '***', email: '***' });
 
-    const attributionData: AttributionData = {};
+    const attributionData: AttributionData & { ad_group?: string } = {};
     for (const key of ATTRIBUTION_FIELD_NAMES) {
       const value = leadData[key];
       if (typeof value === 'string') {
@@ -166,6 +168,11 @@ const handler = async (req: Request): Promise<Response> => {
           attributionData[key] = trimmed;
         }
       }
+    }
+
+    // Include adGroup in attribution data if provided
+    if (leadData.adGroup && leadData.adGroup.trim() !== '') {
+      attributionData.ad_group = leadData.adGroup.trim();
     }
 
     const storedAttribution = Object.keys(attributionData).length > 0 ? attributionData : null;
@@ -194,8 +201,17 @@ const handler = async (req: Request): Promise<Response> => {
       .single();
 
     if (dbError) {
-      console.error('Database error:', dbError);
-      return new Response(JSON.stringify({ error: 'Failed to store lead data' }), {
+      console.error('Database error:', JSON.stringify(dbError, null, 2));
+      console.error('Database error details:', {
+        message: dbError.message,
+        code: dbError.code,
+        details: dbError.details,
+        hint: dbError.hint
+      });
+      return new Response(JSON.stringify({
+        error: 'Failed to store lead data',
+        details: dbError.message || 'Unknown database error'
+      }), {
         status: 500,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
@@ -242,8 +258,17 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
   } catch (error) {
-    console.error('Error in submit-lead function:', error);
-    return new Response(JSON.stringify({ error: 'Internal server error' }), {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : undefined;
+    console.error('Error in submit-lead function:', {
+      message: errorMessage,
+      stack: errorStack,
+      error: JSON.stringify(error, Object.getOwnPropertyNames(error))
+    });
+    return new Response(JSON.stringify({
+      error: 'Internal server error',
+      details: errorMessage
+    }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
