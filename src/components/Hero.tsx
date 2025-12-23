@@ -185,11 +185,20 @@ const Hero = () => {
         throw error;
       }
 
+      // Fire tracking event for GTM
+      if (typeof window !== 'undefined' && (window as any).dataLayer) {
+        (window as any).dataLayer.push({
+          event: 'form_submission',
+          form_name: 'lead_form',
+          landing_page: 'homepage',
+        });
+      }
+
       toast({
         title: "Success!",
         description: "Your information has been submitted successfully. We'll be in touch soon!",
       });
-      
+
       navigate("/thank-you");
     } catch (error) {
       console.error('Lead submission error:', error);
