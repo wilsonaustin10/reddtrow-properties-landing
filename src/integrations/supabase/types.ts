@@ -18,6 +18,7 @@ export type Database = {
         Row: {
           address: string
           asking_price: string | null
+          attribution: Json | null
           condition: string | null
           created_at: string
           email: string
@@ -39,6 +40,7 @@ export type Database = {
         Insert: {
           address: string
           asking_price?: string | null
+          attribution?: Json | null
           condition?: string | null
           created_at?: string
           email: string
@@ -60,6 +62,7 @@ export type Database = {
         Update: {
           address?: string
           asking_price?: string | null
+          attribution?: Json | null
           condition?: string | null
           created_at?: string
           email?: string

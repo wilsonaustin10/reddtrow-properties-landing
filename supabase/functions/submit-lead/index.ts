@@ -181,7 +181,12 @@ const handler = async (req: Request): Promise<Response> => {
     const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Store lead in database
+    // NOTE: Attribution data is sent to Zapier webhook but NOT stored in DB yet
+    // To store attribution in DB, apply migration: 20251107120000_add_lead_attribution.sql
+    // Then uncomment the attribution field in the insert below
     console.log('Storing lead in database...');
+    console.log('Attribution data (sent to Zapier):', storedAttribution);
+
     const { data: lead, error: dbError } = await supabase
       .from('leads')
       .insert({
@@ -195,7 +200,7 @@ const handler = async (req: Request): Promise<Response> => {
         first_name: leadData.firstName,
         last_name: leadData.lastName,
         email: leadData.email,
-        attribution: storedAttribution,
+        // attribution: storedAttribution, // Uncomment after applying migration 20251107120000
       })
       .select()
       .single();
