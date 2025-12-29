@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { divorceContent as content } from '@/content/landing-pages';
 
@@ -19,6 +20,7 @@ const DivorcePage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -37,10 +39,26 @@ const DivorcePage = () => {
         subtitle="A simple process that's fair for both parties"
       />
 
+      {/* Mid-page CTA after Process */}
+      <MidPageCTA
+        headline="Get one thing off your plate today"
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <BenefitGrid
         benefits={content.benefits}
         title="Why Divorcing Couples Choose Us"
         subtitle="We make the process simple and fair for everyone"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="Ready to Move On?"
+        buttonText="Get Your Fair Cash Offer"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection

@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { sellFastContent as content } from '@/content/landing-pages';
 
@@ -19,6 +20,7 @@ const SellFastPage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -73,6 +75,14 @@ const SellFastPage = () => {
         </div>
       </section>
 
+      {/* Mid-page CTA after Comparison */}
+      <MidPageCTA
+        headline="Close in as little as 7 days"
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <ProcessSteps
         steps={content.process}
         title="How It Works"
@@ -83,6 +93,14 @@ const SellFastPage = () => {
         benefits={content.benefits}
         title="Why Sell Your House Fast With Us"
         subtitle="The fastest, easiest way to sell your house"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="Ready to Sell Fast?"
+        buttonText="Get Your Cash Offer Now"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection

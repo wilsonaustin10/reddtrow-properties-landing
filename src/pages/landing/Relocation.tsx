@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { relocationContent as content } from '@/content/landing-pages';
 
@@ -19,6 +20,7 @@ const RelocationPage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -37,10 +39,26 @@ const RelocationPage = () => {
         subtitle="We work around your moving schedule"
       />
 
+      {/* Mid-page CTA after Process */}
+      <MidPageCTA
+        headline="Don't pay two mortgages"
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <BenefitGrid
         benefits={content.benefits}
         title="Why Relocating Homeowners Choose Us"
         subtitle="We specialize in helping people who need to move fast"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="Focus on Your New Chapter"
+        buttonText="Sell Your House Now"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection

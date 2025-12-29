@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { sellAsIsContent as content } from '@/content/landing-pages';
 import { Check } from 'lucide-react';
@@ -20,6 +21,7 @@ const SellAsIsPage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -57,6 +59,14 @@ const SellAsIsPage = () => {
         </div>
       </section>
 
+      {/* Mid-page CTA after Leave Behinds */}
+      <MidPageCTA
+        headline="Skip the repairs. Sell as-is today."
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <ProcessSteps
         steps={content.process}
         title="How Our As-Is Process Works"
@@ -67,6 +77,14 @@ const SellAsIsPage = () => {
         benefits={content.benefits}
         title="Benefits of Selling As-Is"
         subtitle="Why homeowners love our no-hassle approach"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="Leave the Mess to Us"
+        buttonText="Get Your Cash Offer Now"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection

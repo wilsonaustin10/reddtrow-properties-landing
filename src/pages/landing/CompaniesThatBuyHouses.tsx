@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { companiesThatBuyHousesContent as content } from '@/content/landing-pages';
 import { AlertTriangle, Check } from 'lucide-react';
@@ -20,6 +21,7 @@ const CompaniesThatBuyHousesPage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -74,6 +76,14 @@ const CompaniesThatBuyHousesPage = () => {
         </div>
       </section>
 
+      {/* Mid-page CTA after Comparison */}
+      <MidPageCTA
+        headline="See why homeowners choose us"
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <ProcessSteps
         steps={content.process}
         title="How to Choose the Right Company"
@@ -84,6 +94,14 @@ const CompaniesThatBuyHousesPage = () => {
         benefits={content.benefits}
         title="Why Homeowners Choose Us"
         subtitle="What sets us apart from other home buying companies"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="Compare Us to Anyone"
+        buttonText="Get Your Cash Offer Now"
+        variant="primary"
+        showPhone
       />
 
       {/* Red Flags Section */}

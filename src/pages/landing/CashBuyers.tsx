@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { cashBuyersContent as content } from '@/content/landing-pages';
 
@@ -19,6 +20,7 @@ const CashBuyersPage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -73,6 +75,14 @@ const CashBuyersPage = () => {
         </div>
       </section>
 
+      {/* Mid-page CTA after Comparison */}
+      <MidPageCTA
+        headline="Skip the bank. Get cash."
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <ProcessSteps
         steps={content.process}
         title="How Cash Buying Works"
@@ -83,6 +93,14 @@ const CashBuyersPage = () => {
         benefits={content.benefits}
         title="Benefits of Selling to Cash Buyers"
         subtitle="Why a cash sale makes sense for you"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="Get Cash for Your House Today"
+        buttonText="Get Your Cash Offer Now"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection

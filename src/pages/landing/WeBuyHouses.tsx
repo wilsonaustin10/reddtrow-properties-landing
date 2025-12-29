@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { weBuyHousesContent as content } from '@/content/landing-pages';
 import { Home } from 'lucide-react';
@@ -20,6 +21,7 @@ const WeBuyHousesPage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -57,6 +59,14 @@ const WeBuyHousesPage = () => {
         </div>
       </section>
 
+      {/* Mid-page CTA after House Types */}
+      <MidPageCTA
+        headline="We buy houses in any condition"
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <ProcessSteps
         steps={content.process}
         title="How We Buy Houses"
@@ -67,6 +77,14 @@ const WeBuyHousesPage = () => {
         benefits={content.benefits}
         title="Why Sell Your House to Us"
         subtitle="Local buyers, fair offers, fast closing"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="We Buy Houses, Including Yours"
+        buttonText="Get Your Cash Offer Now"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection

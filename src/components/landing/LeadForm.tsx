@@ -301,7 +301,7 @@ const LeadForm = ({
   };
 
   return (
-    <Card className={`bg-background/95 backdrop-blur shadow-xl ${compact ? '' : 'max-w-md'}`}>
+    <Card id="lead-form" className={`bg-background/95 backdrop-blur shadow-xl ${compact ? '' : 'max-w-md'}`}>
       <CardHeader className={`text-center ${compact ? 'pb-2' : 'pb-4'}`}>
         <CardTitle className={`font-bold text-primary ${compact ? 'text-xl' : 'text-2xl'} mb-1`}>
           {title}

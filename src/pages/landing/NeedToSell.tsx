@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { needToSellContent as content } from '@/content/landing-pages';
 import { Link } from 'react-router-dom';
@@ -20,6 +21,7 @@ const NeedToSellPage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -65,6 +67,14 @@ const NeedToSellPage = () => {
         </div>
       </section>
 
+      {/* Mid-page CTA after Situations */}
+      <MidPageCTA
+        headline="Whatever your situation, we can help"
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <ProcessSteps
         steps={content.process}
         title="How It Works"
@@ -75,6 +85,14 @@ const NeedToSellPage = () => {
         benefits={content.benefits}
         title="Why This Is Your Best Option"
         subtitle="Compare the alternatives and see why we make sense"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="See Your Options Today"
+        buttonText="Get Your Cash Offer Now"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection
