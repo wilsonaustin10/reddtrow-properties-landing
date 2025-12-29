@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { foreclosureContent as content } from '@/content/landing-pages';
 
@@ -19,6 +20,7 @@ const ForeclosurePage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -37,10 +39,26 @@ const ForeclosurePage = () => {
         subtitle="Our proven 3-step process to help you avoid foreclosure"
       />
 
+      {/* Mid-page CTA after Process */}
+      <MidPageCTA
+        headline="Time is critical. Get your offer now."
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <BenefitGrid
         benefits={content.benefits}
         title="Why Homeowners Facing Foreclosure Choose Us"
         subtitle="We specialize in helping people in difficult situations"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="Don't Wait Until It's Too Late"
+        buttonText="Get My Cash Offer Now"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection

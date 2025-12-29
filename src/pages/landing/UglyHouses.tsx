@@ -8,6 +8,7 @@ import {
   TestimonialSection,
   FAQAccordion,
   FinalCTA,
+  MidPageCTA,
 } from '@/components/landing';
 import { uglyHousesContent as content } from '@/content/landing-pages';
 import { Check } from 'lucide-react';
@@ -20,6 +21,7 @@ const UglyHousesPage = () => {
         h2={content.hero.h2}
         bullets={content.hero.bullets}
         badge={content.hero.badge}
+        ctaButtonText="Get My Cash Offer"
       >
         <LeadForm
           slug={content.slug}
@@ -57,6 +59,14 @@ const UglyHousesPage = () => {
         </div>
       </section>
 
+      {/* Mid-page CTA after Conditions */}
+      <MidPageCTA
+        headline="We'll buy your house - no matter how ugly"
+        buttonText="Get My Cash Offer"
+        variant="secondary"
+        showPhone
+      />
+
       <ProcessSteps
         steps={content.process}
         title="How It Works"
@@ -67,6 +77,14 @@ const UglyHousesPage = () => {
         benefits={content.benefits}
         title="Why Sell Your Ugly House to Us"
         subtitle="No judgment, no repairs, no hassle"
+      />
+
+      {/* Mid-page CTA after Benefits */}
+      <MidPageCTA
+        headline="Your House Isn't Too Ugly for Us"
+        buttonText="Get Your Cash Offer Now"
+        variant="primary"
+        showPhone
       />
 
       <TestimonialSection
